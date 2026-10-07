@@ -16,7 +16,7 @@ export const Route = createFileRoute("/cases")({
   component: CasesPage,
 });
 
-const empty = { name: "", description: "", organization: "", authorization: AUTH_STATES[0], authRef: "", scope: "", targets: "", start: "", end: "", team: "", classification: "TLP:AMBER" as Case["classification"] };
+const empty = { name: "", description: "", organization: "", authorization: AUTH_STATES[0]! as Case["authorization"], authRef: "", scope: "", targets: "", start: "", end: "", team: "", classification: "TLP:AMBER" as Case["classification"] };
 
 function CasesPage() {
   const { cases, addCase, logAudit } = useSoc();

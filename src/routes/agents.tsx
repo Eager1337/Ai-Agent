@@ -20,7 +20,7 @@ function AgentsPage() {
   const { agents, addAgent } = useSoc();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
-  const [role, setRole] = useState(AGENT_ROLES[0]);
+  const [role, setRole] = useState<string>(AGENT_ROLES[0]!);
   return (
     <>
       <PageTitle code="SEC-16 // AGENT TEAM" title="Agent Team">
