@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedAgentsRouteImport } from './routes/_authenticated/agents'
 import { Route as AuthenticatedCasesRouteImport } from './routes/_authenticated/cases'
@@ -16,46 +18,57 @@ import { Route as AuthenticatedIndicatorsRouteImport } from './routes/_authentic
 import { Route as AuthenticatedTimelineRouteImport } from './routes/_authenticated/timeline'
 import { Route as AuthenticatedMModuleRouteImport } from './routes/_authenticated/m.$module'
 
-const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
-  id: '/_authenticated/',
-  path: '/',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAgentsRoute = AuthenticatedAgentsRouteImport.update({
-  id: '/_authenticated/agents',
+  id: '/agents',
   path: '/agents',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCasesRoute = AuthenticatedCasesRouteImport.update({
-  id: '/_authenticated/cases',
+  id: '/cases',
   path: '/cases',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedIndicatorsRoute = AuthenticatedIndicatorsRouteImport.update({
-  id: '/_authenticated/indicators',
+  id: '/indicators',
   path: '/indicators',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedTimelineRoute = AuthenticatedTimelineRouteImport.update({
-  id: '/_authenticated/timeline',
+  id: '/timeline',
   path: '/timeline',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedMModuleRoute = AuthenticatedMModuleRouteImport.update({
-  id: '/_authenticated/m/$module',
+  id: '/m/$module',
   path: '/m/$module',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof AuthenticatedIndexRoute
+  '/auth': typeof AuthRoute
   '/agents': typeof AuthenticatedAgentsRoute
   '/cases': typeof AuthenticatedCasesRoute
   '/indicators': typeof AuthenticatedIndicatorsRoute
   '/timeline': typeof AuthenticatedTimelineRoute
-  '/': typeof AuthenticatedIndexRoute
   '/m/$module': typeof AuthenticatedMModuleRoute
 }
 export interface FileRoutesByTo {
+  '/auth': typeof AuthRoute
   '/agents': typeof AuthenticatedAgentsRoute
   '/cases': typeof AuthenticatedCasesRoute
   '/indicators': typeof AuthenticatedIndicatorsRoute
@@ -65,6 +78,8 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/_authenticated/agents': typeof AuthenticatedAgentsRoute
   '/_authenticated/cases': typeof AuthenticatedCasesRoute
   '/_authenticated/indicators': typeof AuthenticatedIndicatorsRoute
@@ -75,11 +90,26 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/agents' | '/cases' | '/indicators' | '/timeline' | '/' | '/m/$module'
+    | '/'
+    | '/auth'
+    | '/agents'
+    | '/cases'
+    | '/indicators'
+    | '/timeline'
+    | '/m/$module'
   fileRoutesByTo: FileRoutesByTo
-  to: '/agents' | '/cases' | '/indicators' | '/timeline' | '/' | '/m/$module'
+  to:
+    | '/auth'
+    | '/agents'
+    | '/cases'
+    | '/indicators'
+    | '/timeline'
+    | '/'
+    | '/m/$module'
   id:
     | '__root__'
+    | '/_authenticated'
+    | '/auth'
     | '/_authenticated/agents'
     | '/_authenticated/cases'
     | '/_authenticated/indicators'
@@ -89,6 +119,72 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/': {
+      id: '/_authenticated/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/agents': {
+      id: '/_authenticated/agents'
+      path: '/agents'
+      fullPath: '/agents'
+      preLoaderRoute: typeof AuthenticatedAgentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/cases': {
+      id: '/_authenticated/cases'
+      path: '/cases'
+      fullPath: '/cases'
+      preLoaderRoute: typeof AuthenticatedCasesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/indicators': {
+      id: '/_authenticated/indicators'
+      path: '/indicators'
+      fullPath: '/indicators'
+      preLoaderRoute: typeof AuthenticatedIndicatorsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/timeline': {
+      id: '/_authenticated/timeline'
+      path: '/timeline'
+      fullPath: '/timeline'
+      preLoaderRoute: typeof AuthenticatedTimelineRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/m/$module': {
+      id: '/_authenticated/m/$module'
+      path: '/m/$module'
+      fullPath: '/m/$module'
+      preLoaderRoute: typeof AuthenticatedMModuleRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+  }
+}
+
+interface AuthenticatedRouteRouteChildren {
   AuthenticatedAgentsRoute: typeof AuthenticatedAgentsRoute
   AuthenticatedCasesRoute: typeof AuthenticatedCasesRoute
   AuthenticatedIndicatorsRoute: typeof AuthenticatedIndicatorsRoute
@@ -97,60 +193,21 @@ export interface RootRouteChildren {
   AuthenticatedMModuleRoute: typeof AuthenticatedMModuleRoute
 }
 
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/_authenticated/': {
-      id: '/_authenticated/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/agents': {
-      id: '/_authenticated/agents'
-      path: '/agents'
-      fullPath: '/agents'
-      preLoaderRoute: typeof AuthenticatedAgentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/cases': {
-      id: '/_authenticated/cases'
-      path: '/cases'
-      fullPath: '/cases'
-      preLoaderRoute: typeof AuthenticatedCasesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/indicators': {
-      id: '/_authenticated/indicators'
-      path: '/indicators'
-      fullPath: '/indicators'
-      preLoaderRoute: typeof AuthenticatedIndicatorsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/timeline': {
-      id: '/_authenticated/timeline'
-      path: '/timeline'
-      fullPath: '/timeline'
-      preLoaderRoute: typeof AuthenticatedTimelineRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/m/$module': {
-      id: '/_authenticated/m/$module'
-      path: '/m/$module'
-      fullPath: '/m/$module'
-      preLoaderRoute: typeof AuthenticatedMModuleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-  }
-}
-
-const rootRouteChildren: RootRouteChildren = {
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAgentsRoute: AuthenticatedAgentsRoute,
   AuthenticatedCasesRoute: AuthenticatedCasesRoute,
   AuthenticatedIndicatorsRoute: AuthenticatedIndicatorsRoute,
   AuthenticatedTimelineRoute: AuthenticatedTimelineRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedMModuleRoute: AuthenticatedMModuleRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+const rootRouteChildren: RootRouteChildren = {
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
