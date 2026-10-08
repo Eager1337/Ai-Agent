@@ -3,7 +3,7 @@ import { PageTitle, Panel, btnGhost } from "@/components/soc/Shell";
 import { MODULES } from "@/lib/soc-data";
 import { useSoc } from "@/lib/soc-store";
 
-export const Route = createFileRoute("/m/$module")({
+export const Route = createFileRoute("/_authenticated/m/$module")({
   loader: ({ params }) => {
     const mod = MODULES.find((m) => m.slug === params.module);
     if (!mod) throw notFound();

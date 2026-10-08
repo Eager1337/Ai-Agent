@@ -9,148 +9,205 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AgentsRouteImport } from './routes/agents'
-import { Route as CasesRouteImport } from './routes/cases'
-import { Route as IndicatorsRouteImport } from './routes/indicators'
-import { Route as TimelineRouteImport } from './routes/timeline'
-import { Route as MModuleRouteImport } from './routes/m.$module'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedAgentsRouteImport } from './routes/_authenticated/agents'
+import { Route as AuthenticatedCasesRouteImport } from './routes/_authenticated/cases'
+import { Route as AuthenticatedIndicatorsRouteImport } from './routes/_authenticated/indicators'
+import { Route as AuthenticatedTimelineRouteImport } from './routes/_authenticated/timeline'
+import { Route as AuthenticatedMModuleRouteImport } from './routes/_authenticated/m.$module'
 
-const IndexRoute = IndexRouteImport.update({
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AgentsRoute = AgentsRouteImport.update({
+const AuthenticatedAgentsRoute = AuthenticatedAgentsRouteImport.update({
   id: '/agents',
   path: '/agents',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const CasesRoute = CasesRouteImport.update({
+const AuthenticatedCasesRoute = AuthenticatedCasesRouteImport.update({
   id: '/cases',
   path: '/cases',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const IndicatorsRoute = IndicatorsRouteImport.update({
+const AuthenticatedIndicatorsRoute = AuthenticatedIndicatorsRouteImport.update({
   id: '/indicators',
   path: '/indicators',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const TimelineRoute = TimelineRouteImport.update({
+const AuthenticatedTimelineRoute = AuthenticatedTimelineRouteImport.update({
   id: '/timeline',
   path: '/timeline',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const MModuleRoute = MModuleRouteImport.update({
+const AuthenticatedMModuleRoute = AuthenticatedMModuleRouteImport.update({
   id: '/m/$module',
   path: '/m/$module',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/agents': typeof AgentsRoute
-  '/cases': typeof CasesRoute
-  '/indicators': typeof IndicatorsRoute
-  '/timeline': typeof TimelineRoute
-  '/m/$module': typeof MModuleRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/auth': typeof AuthRoute
+  '/agents': typeof AuthenticatedAgentsRoute
+  '/cases': typeof AuthenticatedCasesRoute
+  '/indicators': typeof AuthenticatedIndicatorsRoute
+  '/timeline': typeof AuthenticatedTimelineRoute
+  '/m/$module': typeof AuthenticatedMModuleRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/agents': typeof AgentsRoute
-  '/cases': typeof CasesRoute
-  '/indicators': typeof IndicatorsRoute
-  '/timeline': typeof TimelineRoute
-  '/m/$module': typeof MModuleRoute
+  '/auth': typeof AuthRoute
+  '/agents': typeof AuthenticatedAgentsRoute
+  '/cases': typeof AuthenticatedCasesRoute
+  '/indicators': typeof AuthenticatedIndicatorsRoute
+  '/timeline': typeof AuthenticatedTimelineRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/m/$module': typeof AuthenticatedMModuleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/agents': typeof AgentsRoute
-  '/cases': typeof CasesRoute
-  '/indicators': typeof IndicatorsRoute
-  '/timeline': typeof TimelineRoute
-  '/m/$module': typeof MModuleRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/agents': typeof AuthenticatedAgentsRoute
+  '/_authenticated/cases': typeof AuthenticatedCasesRoute
+  '/_authenticated/indicators': typeof AuthenticatedIndicatorsRoute
+  '/_authenticated/timeline': typeof AuthenticatedTimelineRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/m/$module': typeof AuthenticatedMModuleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/agents' | '/cases' | '/indicators' | '/timeline' | '/m/$module'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/agents' | '/cases' | '/indicators' | '/timeline' | '/m/$module'
-  id:
-    | '__root__'
     | '/'
+    | '/auth'
     | '/agents'
     | '/cases'
     | '/indicators'
     | '/timeline'
     | '/m/$module'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/auth'
+    | '/agents'
+    | '/cases'
+    | '/indicators'
+    | '/timeline'
+    | '/'
+    | '/m/$module'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/agents'
+    | '/_authenticated/cases'
+    | '/_authenticated/indicators'
+    | '/_authenticated/timeline'
+    | '/_authenticated/'
+    | '/_authenticated/m/$module'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AgentsRoute: typeof AgentsRoute
-  CasesRoute: typeof CasesRoute
-  IndicatorsRoute: typeof IndicatorsRoute
-  TimelineRoute: typeof TimelineRoute
-  MModuleRoute: typeof MModuleRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/agents': {
-      id: '/agents'
+    '/_authenticated/agents': {
+      id: '/_authenticated/agents'
       path: '/agents'
       fullPath: '/agents'
-      preLoaderRoute: typeof AgentsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedAgentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/cases': {
-      id: '/cases'
+    '/_authenticated/cases': {
+      id: '/_authenticated/cases'
       path: '/cases'
       fullPath: '/cases'
-      preLoaderRoute: typeof CasesRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedCasesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/indicators': {
-      id: '/indicators'
+    '/_authenticated/indicators': {
+      id: '/_authenticated/indicators'
       path: '/indicators'
       fullPath: '/indicators'
-      preLoaderRoute: typeof IndicatorsRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIndicatorsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/timeline': {
-      id: '/timeline'
+    '/_authenticated/timeline': {
+      id: '/_authenticated/timeline'
       path: '/timeline'
       fullPath: '/timeline'
-      preLoaderRoute: typeof TimelineRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedTimelineRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/m/$module': {
-      id: '/m/$module'
+    '/_authenticated/m/$module': {
+      id: '/_authenticated/m/$module'
       path: '/m/$module'
       fullPath: '/m/$module'
-      preLoaderRoute: typeof MModuleRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedMModuleRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAgentsRoute: typeof AuthenticatedAgentsRoute
+  AuthenticatedCasesRoute: typeof AuthenticatedCasesRoute
+  AuthenticatedIndicatorsRoute: typeof AuthenticatedIndicatorsRoute
+  AuthenticatedTimelineRoute: typeof AuthenticatedTimelineRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedMModuleRoute: typeof AuthenticatedMModuleRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAgentsRoute: AuthenticatedAgentsRoute,
+  AuthenticatedCasesRoute: AuthenticatedCasesRoute,
+  AuthenticatedIndicatorsRoute: AuthenticatedIndicatorsRoute,
+  AuthenticatedTimelineRoute: AuthenticatedTimelineRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedMModuleRoute: AuthenticatedMModuleRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AgentsRoute: AgentsRoute,
-  CasesRoute: CasesRoute,
-  IndicatorsRoute: IndicatorsRoute,
-  TimelineRoute: TimelineRoute,
-  MModuleRoute: MModuleRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
