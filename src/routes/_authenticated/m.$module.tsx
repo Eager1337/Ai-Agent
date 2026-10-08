@@ -1,7 +1,7 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { PageTitle, Panel, btnGhost } from "@/components/soc/Shell";
 import { MODULES } from "@/lib/soc-data";
-import { useSoc } from "@/lib/soc-store";
+import { useCases, useAgents } from "@/lib/db";
 
 export const Route = createFileRoute("/_authenticated/m/$module")({
   loader: ({ params }) => {
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/m/$module")({
 
 function ModulePage() {
   const { mod } = Route.useLoaderData();
-  const { cases } = useSoc();
+  const { data: cases = [] } = useCases();
   const idx = MODULES.findIndex((m) => m.slug === mod.slug) + 2;
   return (
     <>
@@ -33,7 +33,7 @@ function ModulePage() {
         <Panel title="Attach to case">
           <ul className="space-y-2">
             {cases.filter((c) => c.status !== "Closed").map((c) => (
-              <li key={c.id}><Link to="/cases" className={btnGhost + " w-full justify-between"}><span>{c.id}</span><span className="text-muted-foreground normal-case">{c.authorization}</span></Link></li>
+              <li key={c.id}><Link to="/cases" className={btnGhost + " w-full justify-between"}><span>{c.code}</span><span className="text-muted-foreground normal-case">{c.authorization_status}</span></Link></li>
             ))}
           </ul>
         </Panel>
