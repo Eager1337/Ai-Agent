@@ -14,7 +14,263 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      agents: {
+        Row: {
+          created_at: string
+          focus: string[]
+          id: string
+          instructions: string
+          name: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          focus?: string[]
+          id?: string
+          instructions?: string
+          name: string
+          role: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          focus?: string[]
+          id?: string
+          instructions?: string
+          name?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      case_audit: {
+        Row: {
+          action: string
+          actor: string
+          case_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          actor?: string
+          case_id: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Update: {
+          action?: string
+          actor?: string
+          case_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_audit_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cases: {
+        Row: {
+          auth_ref: string
+          authorization_status: string
+          classification: string
+          code: string
+          created_at: string
+          description: string
+          end_date: string | null
+          id: string
+          investigator: string
+          name: string
+          organization: string
+          scope: string
+          start_date: string | null
+          status: string
+          targets: string
+          team: string
+          user_id: string
+        }
+        Insert: {
+          auth_ref?: string
+          authorization_status?: string
+          classification?: string
+          code: string
+          created_at?: string
+          description?: string
+          end_date?: string | null
+          id?: string
+          investigator?: string
+          name: string
+          organization?: string
+          scope?: string
+          start_date?: string | null
+          status?: string
+          targets?: string
+          team?: string
+          user_id?: string
+        }
+        Update: {
+          auth_ref?: string
+          authorization_status?: string
+          classification?: string
+          code?: string
+          created_at?: string
+          description?: string
+          end_date?: string | null
+          id?: string
+          investigator?: string
+          name?: string
+          organization?: string
+          scope?: string
+          start_date?: string | null
+          status?: string
+          targets?: string
+          team?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          role: string
+          thread_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          thread_id: string
+          user_id?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          thread_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notes: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          project_id: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          id?: string
+          project_id?: string | null
+          title: string
+          user_id?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          project_id?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          name: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          name: string
+          status?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      threads: {
+        Row: {
+          agent_id: string
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "threads_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
