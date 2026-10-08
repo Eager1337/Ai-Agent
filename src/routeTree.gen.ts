@@ -15,7 +15,10 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAgentsRouteImport } from './routes/_authenticated/agents'
 import { Route as AuthenticatedCasesRouteImport } from './routes/_authenticated/cases'
 import { Route as AuthenticatedIndicatorsRouteImport } from './routes/_authenticated/indicators'
+import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
+import { Route as AuthenticatedProjectsRouteImport } from './routes/_authenticated/projects'
 import { Route as AuthenticatedTimelineRouteImport } from './routes/_authenticated/timeline'
+import { Route as AuthenticatedChatThreadIdRouteImport } from './routes/_authenticated/chat.$threadId'
 import { Route as AuthenticatedMModuleRouteImport } from './routes/_authenticated/m.$module'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -47,11 +50,27 @@ const AuthenticatedIndicatorsRoute = AuthenticatedIndicatorsRouteImport.update({
   path: '/indicators',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedNotesRoute = AuthenticatedNotesRouteImport.update({
+  id: '/notes',
+  path: '/notes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProjectsRoute = AuthenticatedProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedTimelineRoute = AuthenticatedTimelineRouteImport.update({
   id: '/timeline',
   path: '/timeline',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedChatThreadIdRoute =
+  AuthenticatedChatThreadIdRouteImport.update({
+    id: '/chat/$threadId',
+    path: '/chat/$threadId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMModuleRoute = AuthenticatedMModuleRouteImport.update({
   id: '/m/$module',
   path: '/m/$module',
@@ -64,7 +83,10 @@ export interface FileRoutesByFullPath {
   '/agents': typeof AuthenticatedAgentsRoute
   '/cases': typeof AuthenticatedCasesRoute
   '/indicators': typeof AuthenticatedIndicatorsRoute
+  '/notes': typeof AuthenticatedNotesRoute
+  '/projects': typeof AuthenticatedProjectsRoute
   '/timeline': typeof AuthenticatedTimelineRoute
+  '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
   '/m/$module': typeof AuthenticatedMModuleRoute
 }
 export interface FileRoutesByTo {
@@ -72,8 +94,11 @@ export interface FileRoutesByTo {
   '/agents': typeof AuthenticatedAgentsRoute
   '/cases': typeof AuthenticatedCasesRoute
   '/indicators': typeof AuthenticatedIndicatorsRoute
+  '/notes': typeof AuthenticatedNotesRoute
+  '/projects': typeof AuthenticatedProjectsRoute
   '/timeline': typeof AuthenticatedTimelineRoute
   '/': typeof AuthenticatedIndexRoute
+  '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
   '/m/$module': typeof AuthenticatedMModuleRoute
 }
 export interface FileRoutesById {
@@ -83,8 +108,11 @@ export interface FileRoutesById {
   '/_authenticated/agents': typeof AuthenticatedAgentsRoute
   '/_authenticated/cases': typeof AuthenticatedCasesRoute
   '/_authenticated/indicators': typeof AuthenticatedIndicatorsRoute
+  '/_authenticated/notes': typeof AuthenticatedNotesRoute
+  '/_authenticated/projects': typeof AuthenticatedProjectsRoute
   '/_authenticated/timeline': typeof AuthenticatedTimelineRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
   '/_authenticated/m/$module': typeof AuthenticatedMModuleRoute
 }
 export interface FileRouteTypes {
@@ -95,7 +123,10 @@ export interface FileRouteTypes {
     | '/agents'
     | '/cases'
     | '/indicators'
+    | '/notes'
+    | '/projects'
     | '/timeline'
+    | '/chat/$threadId'
     | '/m/$module'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -103,8 +134,11 @@ export interface FileRouteTypes {
     | '/agents'
     | '/cases'
     | '/indicators'
+    | '/notes'
+    | '/projects'
     | '/timeline'
     | '/'
+    | '/chat/$threadId'
     | '/m/$module'
   id:
     | '__root__'
@@ -113,8 +147,11 @@ export interface FileRouteTypes {
     | '/_authenticated/agents'
     | '/_authenticated/cases'
     | '/_authenticated/indicators'
+    | '/_authenticated/notes'
+    | '/_authenticated/projects'
     | '/_authenticated/timeline'
     | '/_authenticated/'
+    | '/_authenticated/chat/$threadId'
     | '/_authenticated/m/$module'
   fileRoutesById: FileRoutesById
 }
@@ -167,11 +204,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndicatorsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/notes': {
+      id: '/_authenticated/notes'
+      path: '/notes'
+      fullPath: '/notes'
+      preLoaderRoute: typeof AuthenticatedNotesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/projects': {
+      id: '/_authenticated/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof AuthenticatedProjectsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/timeline': {
       id: '/_authenticated/timeline'
       path: '/timeline'
       fullPath: '/timeline'
       preLoaderRoute: typeof AuthenticatedTimelineRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/chat/$threadId': {
+      id: '/_authenticated/chat/$threadId'
+      path: '/chat/$threadId'
+      fullPath: '/chat/$threadId'
+      preLoaderRoute: typeof AuthenticatedChatThreadIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/m/$module': {
@@ -188,8 +246,11 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAgentsRoute: typeof AuthenticatedAgentsRoute
   AuthenticatedCasesRoute: typeof AuthenticatedCasesRoute
   AuthenticatedIndicatorsRoute: typeof AuthenticatedIndicatorsRoute
+  AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
+  AuthenticatedProjectsRoute: typeof AuthenticatedProjectsRoute
   AuthenticatedTimelineRoute: typeof AuthenticatedTimelineRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedChatThreadIdRoute: typeof AuthenticatedChatThreadIdRoute
   AuthenticatedMModuleRoute: typeof AuthenticatedMModuleRoute
 }
 
@@ -197,8 +258,11 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAgentsRoute: AuthenticatedAgentsRoute,
   AuthenticatedCasesRoute: AuthenticatedCasesRoute,
   AuthenticatedIndicatorsRoute: AuthenticatedIndicatorsRoute,
+  AuthenticatedNotesRoute: AuthenticatedNotesRoute,
+  AuthenticatedProjectsRoute: AuthenticatedProjectsRoute,
   AuthenticatedTimelineRoute: AuthenticatedTimelineRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedChatThreadIdRoute: AuthenticatedChatThreadIdRoute,
   AuthenticatedMModuleRoute: AuthenticatedMModuleRoute,
 }
 
