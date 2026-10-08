@@ -4,7 +4,7 @@ import { PageTitle, Panel, btn, btnGhost, input } from "@/components/soc/Shell";
 import { AUTH_STATES, type Case } from "@/lib/soc-data";
 import { useSoc } from "@/lib/soc-store";
 
-export const Route = createFileRoute("/cases")({
+export const Route = createFileRoute("/_authenticated/cases")({
   head: () => ({
     meta: [
       { title: "Cases — Eager AI Command Center" },

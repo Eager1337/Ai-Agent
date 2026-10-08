@@ -4,7 +4,7 @@ import { PageTitle, Panel, btn, btnGhost, input } from "@/components/soc/Shell";
 import { AGENT_ROLES } from "@/lib/soc-data";
 import { useSoc } from "@/lib/soc-store";
 
-export const Route = createFileRoute("/agents")({
+export const Route = createFileRoute("/_authenticated/agents")({
   head: () => ({
     meta: [
       { title: "Agent Team — Eager AI Command Center" },

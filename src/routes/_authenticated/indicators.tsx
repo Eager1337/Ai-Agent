@@ -3,7 +3,7 @@ import { useState } from "react";
 import { PageTitle, Panel, input } from "@/components/soc/Shell";
 import { indicators, sevClass } from "@/lib/soc-data";
 
-export const Route = createFileRoute("/indicators")({
+export const Route = createFileRoute("/_authenticated/indicators")({
   head: () => ({
     meta: [
       { title: "Indicators — Eager AI Command Center" },

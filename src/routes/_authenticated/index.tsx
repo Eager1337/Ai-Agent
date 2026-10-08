@@ -3,7 +3,7 @@ import { PageTitle, Panel } from "@/components/soc/Shell";
 import { alerts, indicators, labs, sevClass, timeline } from "@/lib/soc-data";
 import { useSoc } from "@/lib/soc-store";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "Overview — Eager AI Command Center" },

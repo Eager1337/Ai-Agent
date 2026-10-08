@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageTitle, Panel } from "@/components/soc/Shell";
 import { timeline } from "@/lib/soc-data";
 
-export const Route = createFileRoute("/timeline")({
+export const Route = createFileRoute("/_authenticated/timeline")({
   head: () => ({
     meta: [
       { title: "Timeline — Eager AI Command Center" },
