@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageTitle, Panel } from "@/components/soc/Shell";
 import { alerts, indicators, labs, sevClass, timeline } from "@/lib/soc-data";
-import { useSoc } from "@/lib/soc-store";
+import { useCases, useAgents } from "@/lib/db";
 
 export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/")({
 });
 
 function Overview() {
-  const { cases, agents } = useSoc();
+  const { data: cases = [] } = useCases(); const { data: agents = [] } = useAgents();
   const stats = [
     { k: "Active cases", v: cases.filter((c) => c.status !== "Closed").length },
     { k: "Open investigations", v: 4 },
@@ -53,9 +53,9 @@ function Overview() {
               <li key={a.id} className="text-sm">
                 <div className="flex justify-between font-mono text-xs">
                   <span className="text-primary">{a.name}</span>
-                  <span className={a.status === "active" ? "text-success" : "text-muted-foreground"}>{a.status}</span>
+                  <span className={"text-muted-foreground"}>{a.role}</span>
                 </div>
-                <div className="text-muted-foreground">{a.lastTask}</div>
+                <div className="text-muted-foreground">{a.instructions || "Ready"}</div>
               </li>
             ))}
           </ul>
@@ -64,8 +64,8 @@ function Overview() {
           <ul className="divide-y">
             {cases.slice(0, 4).map((c) => (
               <li key={c.id} className="py-2 flex justify-between gap-3 text-sm">
-                <div><span className="font-mono text-xs text-muted-foreground mr-2">{c.id}</span>{c.name}</div>
-                <span className="font-mono text-xs text-info shrink-0">{c.authorization}</span>
+                <div><span className="font-mono text-xs text-muted-foreground mr-2">{c.code}</span>{c.name}</div>
+                <span className="font-mono text-xs text-info shrink-0">{c.authorization_status}</span>
               </li>
             ))}
           </ul>
