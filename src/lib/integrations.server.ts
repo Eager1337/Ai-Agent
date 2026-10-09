@@ -1,6 +1,6 @@
 import { createCipheriv, createDecipheriv, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
-import { Snaptrade } from "snaptrade-typescript-sdk";
+import { Snaptrade, SnaptradeAuth } from "snaptrade-typescript-sdk";
 import { userClient } from "@/lib/ai.server";
 
 export type AuthenticatedRequest = { userId: string; db: ReturnType<typeof createClient> };
@@ -39,10 +39,10 @@ export function getSnapTradeClient() {
   const clientId = process.env["SNAPTRADE_CLIENT_ID"];
   const consumerKey = process.env["SNAPTRADE_CONSUMER_KEY"];
   if (!clientId || !consumerKey) throw new Error("SnapTrade server credentials are not configured");
-  return new Snaptrade({ clientId, consumerKey }) as unknown as {
+  return new Snaptrade({ auth: SnaptradeAuth.commercialApiKey({ consumerKey, clientId }) }) as unknown as {
     authentication: {
       registerSnapTradeUser: (params: { userId: string }) => Promise<unknown>;
-      loginSnapTradeUser: (params: { userId: string; userSecret: string }, options: { connectionType: "read"; customRedirect: string }) => Promise<unknown>;
+      loginSnapTradeUser: (params: { userId: string; userSecret: string; connectionType: "read"; customRedirect: string }) => Promise<unknown>;
     };
     accountInformation: {
       listUserAccounts: (params: { userId: string; userSecret: string }) => Promise<unknown>;
