@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main, fix/command-center-pages]
+    branches: [main, fix/command-center-pages, fix/eager-owner-paywall-trading-lab]
 
 permissions:
   contents: read
