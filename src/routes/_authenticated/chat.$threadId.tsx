@@ -53,6 +53,7 @@ function Chat({ threadId }: { threadId: string }) {
     try {
       await streamPost("/api/chat", { threadId, content }, setReply);
     } catch (e) {
+      setText(content);
       setErr(e instanceof Error ? e.message : "The assistant response failed. Please try again.");
     } finally {
       await Promise.all([
@@ -84,7 +85,7 @@ function Chat({ threadId }: { threadId: string }) {
           {pending && !msgs.some((m) => m.content === pending && m.role === "user") && <Bubble role="user" content={pending} />}
           {busy && (reply ? <Bubble role="assistant" content={reply} /> : <p className="font-mono text-xs text-muted-foreground live-dot">Agent is working…</p>)}
           {msgs.length === 0 && !busy && !messagesLoading && !messagesError && <p className="text-sm text-muted-foreground">Give your agent a task to begin.</p>}
-          {err && <div className="border border-destructive/40 rounded-sm p-3 text-sm text-destructive">{err}<button className={btnGhost + " ml-2"} onClick={() => setText(pending ?? text)}>Retry message</button></div>}
+          {err && <div className="border border-destructive/40 rounded-sm p-3 text-sm text-destructive">{err} Your draft has been restored; review it and press Send to retry.</div>}
         </div>
         <div className="flex gap-2 mt-4 items-end">
           <textarea ref={inputRef} rows={2} className={input + " resize-none"} value={text} onChange={(e) => setText(e.target.value)}
