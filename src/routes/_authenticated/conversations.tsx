@@ -14,18 +14,21 @@ function ConversationsPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["saved-conversations"],
     queryFn: async () => {
-      const [threadResult, messageResult] = await Promise.all([
-        supabase.from("threads").select("id,title,agent_id,created_at,updated_at,agents(name,role)").order("updated_at", { ascending: false }),
-        supabase.from("messages").select("thread_id"),
-      ]);
+      const threadResult = await supabase.from("threads")
+        .select("id,title,agent_id,created_at,updated_at,agents(name,role)")
+        .order("updated_at", { ascending: false });
       if (threadResult.error) throw new Error("Could not load saved conversations. Check your sign-in and database permissions.");
-      if (messageResult.error) throw new Error("Conversations loaded, but message counts could not be retrieved.");
-      const counts = new Map<string, number>();
-      for (const message of messageResult.data ?? []) counts.set(message.thread_id, (counts.get(message.thread_id) ?? 0) + 1);
-      return (threadResult.data ?? []).map((thread) => ({
+      const threads = threadResult.data ?? [];
+      const counts = await Promise.all(threads.map(async (thread) => {
+        const result = await supabase.from("messages").select("id", { count: "exact", head: true }).eq("thread_id", thread.id);
+        if (result.error) throw new Error("Conversations loaded, but message counts could not be retrieved.");
+        return [thread.id, result.count ?? 0] as const;
+      }));
+      const countByThread = new Map<string, number>(counts);
+      return threads.map((thread) => ({
         ...thread,
         agent: Array.isArray(thread.agents) ? thread.agents[0] : thread.agents,
-        messageCount: counts.get(thread.id) ?? 0,
+        messageCount: countByThread.get(thread.id) ?? 0,
       }));
     },
     staleTime: 15_000,
@@ -34,7 +37,7 @@ function ConversationsPage() {
 
   return <>
     <PageTitle code="WORKSPACE // SAVED THREADS" title="Saved Conversations">
-      <input className={input + " w-56"} value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search title or agent…" />
+      <input className={input + " w-56"} value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search saved conversations" placeholder="Search title or agent…" />
     </PageTitle>
     <Panel title={`${rows.length} saved conversations`}>
       {isLoading ? <div className="h-28 animate-pulse rounded bg-muted" /> : error ? <p className="text-sm text-destructive">{error.message}</p> : rows.length === 0 ? <Empty>{data?.length ? "No conversations match your search." : "Your saved agent conversations will appear here. Start a chat from the Agent Team."}</Empty> : (
