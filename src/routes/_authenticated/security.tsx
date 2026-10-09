@@ -15,7 +15,7 @@ const provenance = { user: "USER-PROVIDED INFORMATION", inference: "AI INFERENCE
 
 function SecurityWorkspace() {
   const { user } = useRouteContext({ from: "/_authenticated" });
-  const { data: cases = [], isLoading } = useCases();
+  const { data: cases = [], isLoading, error: casesError } = useCases();
   const [section, setSection] = useState<Section>("Overview");
   const [caseId, setCaseId] = useState("");
   const [learning, setLearning] = useState(true);
@@ -24,6 +24,7 @@ function SecurityWorkspace() {
   const [finding, setFinding] = useState({ title: "", source: "", url: "", details: "", confidence: "Unverified" });
   const [notice, setNotice] = useState("");
   const [report, setReport] = useState("");
+  const [hypothesis, setHypothesis] = useState("");
   const selectedCase = cases.find((c) => c.id === caseId) ?? cases[0];
   const { data: audit = [] } = useAudit(selectedCase?.id);
   const addAudit = useInsert("case_audit", ["audit"]);
@@ -114,6 +115,7 @@ function SecurityWorkspace() {
           <button className={!learning ? btn : btnGhost} onClick={() => setLearning(false)}>Professional</button>
         </div>
       </PageTitle>
+      {casesError && <div role="alert" className="border border-destructive/40 bg-destructive/5 rounded-md p-3 mb-4 text-sm text-destructive">Cases could not be loaded. Check your sign-in and database permissions, then refresh this page.</div>}
       <div className="border border-warning/40 bg-warning/5 rounded-md p-3 mb-4 text-sm">
         <strong>Authorized use only.</strong> Analyze systems and artifacts only when you have permission. This workspace does not perform live scans, fetch OSINT targets, or execute samples. External-system actions require a separate, explicit authorization workflow.
       </div>
@@ -124,7 +126,7 @@ function SecurityWorkspace() {
           </div>
           <div className="border-t mt-3 pt-3">
             <label className="label-mono">Active case</label>
-            <select className={input + " mt-1"} value={selectedCase?.id ?? ""} onChange={(e) => setCaseId(e.target.value)}>
+            <select aria-label="Active case" className={input + " mt-1"} value={selectedCase?.id ?? ""} onChange={(e) => setCaseId(e.target.value)}>
               {cases.length === 0 && <option value="">No cases</option>}
               {cases.map((c) => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}
             </select>
@@ -199,9 +201,9 @@ function SecurityWorkspace() {
             <Link to="/indicators" className={btnGhost}>Open indicator workspace →</Link>
           </Panel>}
           {section === "Hunting" && <Panel title="Threat hunting worksheet">
-            <label className="block"><span className="label-mono">Hypothesis / question</span><textarea className={input + " mt-1 min-h-24"} value={report} onChange={(e) => setReport(e.target.value)} placeholder="Example: Are there repeated failed logins followed by a success in the supplied authentication logs?" /></label>
+            <label className="block"><span className="label-mono">Hypothesis / question</span><textarea className={input + " mt-1 min-h-24"} value={hypothesis} onChange={(e) => setHypothesis(e.target.value)} placeholder="Example: Are there repeated failed logins followed by a success in the supplied authentication logs?" /></label>
             <p className="text-xs text-muted-foreground mt-2">Use provided logs only. Record the data source, query, timeframe, findings, limitations and confidence in your case notes. This worksheet does not query production systems.</p>
-            <button className={btn + " mt-3"} disabled={!canAnalyze || !report.trim() || addAudit.isPending} onClick={() => void recordAudit(`Threat-hunting hypothesis: ${report}; source=USER-PROVIDED INFORMATION; status=analyst worksheet, not executed`, "Hypothesis saved to the case audit trail. No query was executed.")}>Save hypothesis to case</button>
+            <button className={btn + " mt-3"} disabled={!canAnalyze || !hypothesis.trim() || addAudit.isPending} onClick={() => void recordAudit(`Threat-hunting hypothesis: ${hypothesis}; source=USER-PROVIDED INFORMATION; status=analyst worksheet, not executed`, "Hypothesis saved to the case audit trail. No query was executed.")}>Save hypothesis to case</button>
           </Panel>}
           {section === "Reports" && <Panel title="Report generator">
             <label className="block"><span className="label-mono">Executive summary / analyst notes</span><textarea className={input + " mt-1 min-h-36"} value={report} onChange={(e) => setReport(e.target.value)} placeholder="Scope, methodology, evidence, findings, confidence, risk, remediation and limitations…" /></label>
