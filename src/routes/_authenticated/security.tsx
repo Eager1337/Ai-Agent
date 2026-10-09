@@ -31,6 +31,21 @@ function SecurityWorkspace() {
   const canAnalyze = !!selectedCase && !!selectedCase.scope.trim() && !!selectedCase.authorization_status;
   const filteredAudit = audit.filter((item) => (item.action + item.actor).toLowerCase().includes(query.toLowerCase()));
 
+  async function recordAudit(action: string, successMessage: string): Promise<boolean> {
+    if (!selectedCase) {
+      setNotice("Create or select an authorized case before recording investigation activity.");
+      return false;
+    }
+    try {
+      await addAudit.mutateAsync({ case_id: selectedCase.id, actor, action });
+      setNotice(successMessage);
+      return true;
+    } catch {
+      setNotice("Could not save this item to the case audit trail. Check your connection and try again.");
+      return false;
+    }
+  }
+
   const exportReport = () => {
     const body = [
       "# Eager AI — Security Investigation Report", "",
@@ -64,8 +79,11 @@ function SecurityWorkspace() {
       const content = textual ? (await f.text()).slice(0, 500_000) : "";
       const result = { name: f.name, size: f.size, type: f.type || "unknown", sha256: hash, text: content, source: "USER-PROVIDED INFORMATION" };
       setFile(result);
-      if (selectedCase) await addAudit.mutateAsync({ case_id: selectedCase.id, actor, action: `Evidence indexed locally: ${f.name}; size=${f.size}; SHA-256=${hash}; contents remain in browser; source=USER-PROVIDED INFORMATION` });
-      setNotice("SHA-256 calculated locally. File contents were not uploaded or executed.");
+      if (selectedCase) {
+        await recordAudit(`Evidence indexed locally: ${f.name}; size=${f.size}; SHA-256=${hash}; contents remain in browser; source=USER-PROVIDED INFORMATION`, "SHA-256 calculated locally. File contents were not uploaded or executed.");
+      } else {
+        setNotice("SHA-256 calculated locally, but no case is selected so no audit entry was saved.");
+      }
     } catch {
       setNotice("Could not read this file in the browser. Try a smaller supported file.");
     }
@@ -73,9 +91,8 @@ function SecurityWorkspace() {
 
   async function saveFinding() {
     if (!selectedCase || !finding.title.trim() || !finding.details.trim()) return;
-    await addAudit.mutateAsync({ case_id: selectedCase.id, actor, action: `OSINT finding [${finding.confidence}]: ${finding.title}; source=${finding.source || "not specified"}; URL=${finding.url || "not supplied"}; details=${finding.details}; provenance=USER-PROVIDED INFORMATION` });
-    setFinding({ title: "", source: "", url: "", details: "", confidence: "Unverified" });
-    setNotice("Finding added to the case audit trail as user-provided information. Verify it independently before treating it as fact.");
+    const saved = await recordAudit(`OSINT finding [${finding.confidence}]: ${finding.title}; source=${finding.source || "not specified"}; URL=${finding.url || "not supplied"}; details=${finding.details}; provenance=USER-PROVIDED INFORMATION`, "Finding added to the case audit trail as user-provided information. Verify it independently before treating it as fact.");
+    if (saved) setFinding({ title: "", source: "", url: "", details: "", confidence: "Unverified" });
   }
 
   const extracted = useMemo(() => {
@@ -184,11 +201,11 @@ function SecurityWorkspace() {
           {section === "Hunting" && <Panel title="Threat hunting worksheet">
             <label className="block"><span className="label-mono">Hypothesis / question</span><textarea className={input + " mt-1 min-h-24"} value={report} onChange={(e) => setReport(e.target.value)} placeholder="Example: Are there repeated failed logins followed by a success in the supplied authentication logs?" /></label>
             <p className="text-xs text-muted-foreground mt-2">Use provided logs only. Record the data source, query, timeframe, findings, limitations and confidence in your case notes. This worksheet does not query production systems.</p>
-            <button className={btn + " mt-3"} disabled={!canAnalyze || !report.trim() || addAudit.isPending} onClick={() => void addAudit.mutateAsync({ case_id: selectedCase!.id, actor, action: `Threat-hunting hypothesis: ${report}; source=USER-PROVIDED INFORMATION; status=analyst worksheet, not executed` }).then(() => setNotice("Hypothesis saved to the case audit trail. No query was executed."))}>Save hypothesis to case</button>
+            <button className={btn + " mt-3"} disabled={!canAnalyze || !report.trim() || addAudit.isPending} onClick={() => void recordAudit(`Threat-hunting hypothesis: ${report}; source=USER-PROVIDED INFORMATION; status=analyst worksheet, not executed`, "Hypothesis saved to the case audit trail. No query was executed.")}>Save hypothesis to case</button>
           </Panel>}
           {section === "Reports" && <Panel title="Report generator">
             <label className="block"><span className="label-mono">Executive summary / analyst notes</span><textarea className={input + " mt-1 min-h-36"} value={report} onChange={(e) => setReport(e.target.value)} placeholder="Scope, methodology, evidence, findings, confidence, risk, remediation and limitations…" /></label>
-            <div className="flex flex-wrap gap-2 mt-3"><button className={btn} onClick={exportReport}>Export Markdown report</button><button className={btnGhost} disabled={!selectedCase || !report.trim() || addAudit.isPending} onClick={() => void addAudit.mutateAsync({ case_id: selectedCase!.id, actor, action: `Report draft updated; summary length=${report.length}; format=Markdown; provenance=USER-PROVIDED INFORMATION` }).then(() => setNotice("Report draft logged to the case audit trail."))}>Log report draft</button></div>
+            <div className="flex flex-wrap gap-2 mt-3"><button className={btn} onClick={exportReport}>Export Markdown report</button><button className={btnGhost} disabled={!selectedCase || !report.trim() || addAudit.isPending} onClick={() => void recordAudit(`Report draft updated; summary length=${report.length}; format=Markdown; provenance=USER-PROVIDED INFORMATION`, "Report draft logged to the case audit trail.")}>Log report draft</button></div>
           </Panel>}
           {section === "Security Labs" && <Panel title="Controlled security labs">
             <div className="grid sm:grid-cols-2 gap-3">{[["Web security","Practice input validation, sessions and secure headers in a local training app."],["Network defense","Read sample logs and reason about segmentation and anomalous traffic."],["DFIR","Build a timeline from a supplied, sanitized incident dataset."],["Authentication","Use synthetic training accounts to review MFA and password policy."],["OSINT","Compare public sources and score claims by confidence."],["Threat hunting","Write a hypothesis and validate it against a known training dataset."]].map(([name,desc]) => <div key={name} className="border rounded-sm p-3"><div className="font-mono text-sm text-primary">{name}</div><p className="text-sm text-muted-foreground mt-1">{desc}</p><div className="text-[10px] mt-2">SIMULATED LAB PLAN · NOT RUNNING</div></div>)}</div>
