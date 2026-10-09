@@ -37,7 +37,7 @@ function AuthPage() {
       if (error) setMsg(error.message);
     } else {
       const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } });
-      setMsg(error ? error.message : "Check your email to confirm your account.");
+      if (error) setMsg(error.message);
     }
     setBusy(false);
   };

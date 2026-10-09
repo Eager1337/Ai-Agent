@@ -17,8 +17,11 @@ import { Route as AuthenticatedCasesRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedIndicatorsRouteImport } from './routes/_authenticated/indicators'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
+import { Route as AuthenticatedPlannerRouteImport } from './routes/_authenticated/planner'
 import { Route as AuthenticatedProjectsRouteImport } from './routes/_authenticated/projects'
 import { Route as AuthenticatedTimelineRouteImport } from './routes/_authenticated/timeline'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiPlanRouteImport } from './routes/api/plan'
 import { Route as AuthenticatedChatThreadIdRouteImport } from './routes/_authenticated/chat.$threadId'
 import { Route as AuthenticatedMModuleRouteImport } from './routes/_authenticated/m.$module'
 
@@ -61,6 +64,11 @@ const AuthenticatedNotesRoute = AuthenticatedNotesRouteImport.update({
   path: '/notes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPlannerRoute = AuthenticatedPlannerRouteImport.update({
+  id: '/planner',
+  path: '/planner',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedProjectsRoute = AuthenticatedProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
@@ -70,6 +78,16 @@ const AuthenticatedTimelineRoute = AuthenticatedTimelineRouteImport.update({
   id: '/timeline',
   path: '/timeline',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPlanRoute = ApiPlanRouteImport.update({
+  id: '/api/plan',
+  path: '/api/plan',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedChatThreadIdRoute =
   AuthenticatedChatThreadIdRouteImport.update({
@@ -91,8 +109,11 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/indicators': typeof AuthenticatedIndicatorsRoute
   '/notes': typeof AuthenticatedNotesRoute
+  '/planner': typeof AuthenticatedPlannerRoute
   '/projects': typeof AuthenticatedProjectsRoute
   '/timeline': typeof AuthenticatedTimelineRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/plan': typeof ApiPlanRoute
   '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
   '/m/$module': typeof AuthenticatedMModuleRoute
 }
@@ -104,8 +125,11 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/indicators': typeof AuthenticatedIndicatorsRoute
   '/notes': typeof AuthenticatedNotesRoute
+  '/planner': typeof AuthenticatedPlannerRoute
   '/projects': typeof AuthenticatedProjectsRoute
   '/timeline': typeof AuthenticatedTimelineRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/plan': typeof ApiPlanRoute
   '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
   '/m/$module': typeof AuthenticatedMModuleRoute
 }
@@ -119,8 +143,11 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/indicators': typeof AuthenticatedIndicatorsRoute
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
+  '/_authenticated/planner': typeof AuthenticatedPlannerRoute
   '/_authenticated/projects': typeof AuthenticatedProjectsRoute
   '/_authenticated/timeline': typeof AuthenticatedTimelineRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/plan': typeof ApiPlanRoute
   '/_authenticated/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
   '/_authenticated/m/$module': typeof AuthenticatedMModuleRoute
 }
@@ -134,8 +161,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/indicators'
     | '/notes'
+    | '/planner'
     | '/projects'
     | '/timeline'
+    | '/api/chat'
+    | '/api/plan'
     | '/chat/$threadId'
     | '/m/$module'
   fileRoutesByTo: FileRoutesByTo
@@ -147,8 +177,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/indicators'
     | '/notes'
+    | '/planner'
     | '/projects'
     | '/timeline'
+    | '/api/chat'
+    | '/api/plan'
     | '/chat/$threadId'
     | '/m/$module'
   id:
@@ -161,8 +194,11 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/indicators'
     | '/_authenticated/notes'
+    | '/_authenticated/planner'
     | '/_authenticated/projects'
     | '/_authenticated/timeline'
+    | '/api/chat'
+    | '/api/plan'
     | '/_authenticated/chat/$threadId'
     | '/_authenticated/m/$module'
   fileRoutesById: FileRoutesById
@@ -171,6 +207,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiChatRoute: typeof ApiChatRoute
+  ApiPlanRoute: typeof ApiPlanRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -231,6 +269,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedNotesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/planner': {
+      id: '/_authenticated/planner'
+      path: '/planner'
+      fullPath: '/planner'
+      preLoaderRoute: typeof AuthenticatedPlannerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/projects': {
       id: '/_authenticated/projects'
       path: '/projects'
@@ -244,6 +289,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/timeline'
       preLoaderRoute: typeof AuthenticatedTimelineRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/plan': {
+      id: '/api/plan'
+      path: '/api/plan'
+      fullPath: '/api/plan'
+      preLoaderRoute: typeof ApiPlanRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/chat/$threadId': {
       id: '/_authenticated/chat/$threadId'
@@ -268,6 +327,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedIndicatorsRoute: typeof AuthenticatedIndicatorsRoute
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
+  AuthenticatedPlannerRoute: typeof AuthenticatedPlannerRoute
   AuthenticatedProjectsRoute: typeof AuthenticatedProjectsRoute
   AuthenticatedTimelineRoute: typeof AuthenticatedTimelineRoute
   AuthenticatedChatThreadIdRoute: typeof AuthenticatedChatThreadIdRoute
@@ -280,6 +340,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedIndicatorsRoute: AuthenticatedIndicatorsRoute,
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
+  AuthenticatedPlannerRoute: AuthenticatedPlannerRoute,
   AuthenticatedProjectsRoute: AuthenticatedProjectsRoute,
   AuthenticatedTimelineRoute: AuthenticatedTimelineRoute,
   AuthenticatedChatThreadIdRoute: AuthenticatedChatThreadIdRoute,
@@ -293,6 +354,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiChatRoute: ApiChatRoute,
+  ApiPlanRoute: ApiPlanRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

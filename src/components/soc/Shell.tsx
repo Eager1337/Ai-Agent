@@ -11,6 +11,7 @@ const workspace = [
 const core = [
   { to: "/dashboard", label: "Overview" },
   { to: "/cases", label: "Cases" },
+  { to: "/planner", label: "AI Planner" },
   { to: "/agents", label: "Agent Team" },
   { to: "/indicators", label: "Indicators" },
   { to: "/timeline", label: "Timeline" },
