@@ -9,6 +9,7 @@ export const Route = createFileRoute("/api/trading/status")({
         try { auth = await authenticateRequest(request); }
         catch { return Response.json({ configured: false, connected: false, reason: "server-configuration" }, { status: 200 }); }
         if (!auth) return Response.json({ error: "Unauthorized" }, { status: 401 });
+        if (auth.email !== "ebeaver091@gmail.com" && !auth.paidAccess) return Response.json({ error: "Paid access is required. Contact the workspace owner after payment." }, { status: 403 });
         const configured = Boolean(process.env["SNAPTRADE_CLIENT_ID"] && process.env["SNAPTRADE_CONSUMER_KEY"] && process.env["TRADING_ENCRYPTION_KEY"]);
         if (!configured) return Response.json({ configured: false, connected: false, provider: "SnapTrade", permission: "read-only" });
         const result = await auth.db.from("trading_provider_users").select("provider_user_id,user_secret_ciphertext,user_secret_iv,user_secret_tag").eq("user_id", auth.userId).maybeSingle();
