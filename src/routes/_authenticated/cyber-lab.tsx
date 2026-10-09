@@ -56,6 +56,23 @@ function CyberLabPage() {
     } finally { setBusyMode(null); }
   }
 
+  async function stopLab() {
+    if (!sessionId) return;
+    setBusyMode("linux-desktop");
+    try {
+      const { data } = await supabase.auth.getSession();
+      const token = data.session?.access_token;
+      if (!token) throw new Error("Your session has expired. Sign in again.");
+      const response = await fetch(`/api/lab/sessions/${sessionId}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      const result = await response.json() as { status?: string; message?: string; error?: string };
+      if (!response.ok) throw new Error(result.error ?? "Could not stop lab session.");
+      setSessionStatus(result.message ?? "Stop request sent.");
+      setLaunchUrl("");
+    } catch (error) {
+      setSessionStatus(error instanceof Error ? error.message : "Could not stop lab session.");
+    } finally { setBusyMode(null); }
+  }
+
   async function checkLabStatus() {
     if (!sessionId) return;
     setBusyMode("linux-desktop");
@@ -82,7 +99,7 @@ function CyberLabPage() {
         <div className="border rounded-sm p-4"><div className="label-mono">ENVIRONMENT 01</div><h3 className="font-semibold mt-1">Browser Linux desktop</h3><p className="text-sm text-muted-foreground mt-2">Launch a browser-delivered Linux workspace configured by your Kasm administrator for safe learning tools and lab targets.</p><button className={btn + " mt-3"} disabled={busyMode !== null} onClick={() => void startLab("linux-desktop")}>{busyMode === "linux-desktop" ? "Starting…" : "Start Linux desktop"}</button></div>
         <div className="border rounded-sm p-4"><div className="label-mono">ENVIRONMENT 02</div><h3 className="font-semibold mt-1">Full virtual machine</h3><p className="text-sm text-muted-foreground mt-2">Launch a separate VM or server-pool workspace only when the provider is configured with a dedicated image and network isolation.</p><button className={btn + " mt-3"} disabled={busyMode !== null} onClick={() => void startLab("virtual-machine")}>{busyMode === "virtual-machine" ? "Starting…" : "Start full VM"}</button></div>
       </div>
-      {sessionStatus && <div role="status" className="border rounded-sm p-3 mt-4 text-sm"><p>{sessionStatus}</p>{progress !== null && <p className="text-muted-foreground mt-1">Provider progress: {progress}%</p>}<div className="flex flex-wrap gap-2 mt-3">{sessionId && !launchUrl && <button className={btnGhost} disabled={busyMode !== null} onClick={() => void checkLabStatus()}>Check status</button>}{launchUrl && <a className={btn} href={launchUrl} target="_blank" rel="noreferrer">Open isolated workspace ↗</a>}</div></div>}
+      {sessionStatus && <div role="status" className="border rounded-sm p-3 mt-4 text-sm"><p>{sessionStatus}</p>{progress !== null && <p className="text-muted-foreground mt-1">Provider progress: {progress}%</p>}<div className="flex flex-wrap gap-2 mt-3">{sessionId && !launchUrl && <button className={btnGhost} disabled={busyMode !== null} onClick={() => void checkLabStatus()}>Check status</button>}{launchUrl && <a className={btn} href={launchUrl} target="_blank" rel="noreferrer">Open isolated workspace ↗</a>}{sessionId && <button className={btnGhost} disabled={busyMode !== null} onClick={() => void stopLab()}>Stop workspace</button>}</div></div>}
     </Panel>
     <div className="grid lg:grid-cols-[300px_minmax(0,1fr)] gap-4">
       <Panel title="Training modules">
