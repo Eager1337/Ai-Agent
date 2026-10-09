@@ -22,8 +22,16 @@ import { Route as AuthenticatedPlannerRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedProjectsRouteImport } from './routes/_authenticated/projects'
 import { Route as AuthenticatedSecurityRouteImport } from './routes/_authenticated/security'
 import { Route as AuthenticatedTimelineRouteImport } from './routes/_authenticated/timeline'
+import { Route as AuthenticatedCyberLabRouteImport } from './routes/_authenticated/cyber-lab'
+import { Route as AuthenticatedTradingRouteImport } from './routes/_authenticated/trading'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiPlanRouteImport } from './routes/api/plan'
+import { Route as ApiLabSessionsRouteImport } from './routes/api/lab.sessions'
+import { Route as ApiLabSessionsSessionIdRouteImport } from './routes/api/lab.sessions.$sessionId'
+import { Route as ApiTradingAccountsRouteImport } from './routes/api/trading.accounts'
+import { Route as ApiTradingActivitiesRouteImport } from './routes/api/trading.activities'
+import { Route as ApiTradingConnectRouteImport } from './routes/api/trading.connect'
+import { Route as ApiTradingStatusRouteImport } from './routes/api/trading.status'
 import { Route as AuthenticatedChatThreadIdRouteImport } from './routes/_authenticated/chat.$threadId'
 import { Route as AuthenticatedMModuleRouteImport } from './routes/_authenticated/m.$module'
 
@@ -91,6 +99,16 @@ const AuthenticatedTimelineRoute = AuthenticatedTimelineRouteImport.update({
   path: '/timeline',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCyberLabRoute = AuthenticatedCyberLabRouteImport.update({
+  id: '/cyber-lab',
+  path: '/cyber-lab',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTradingRoute = AuthenticatedTradingRouteImport.update({
+  id: '/trading',
+  path: '/trading',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -99,6 +117,36 @@ const ApiChatRoute = ApiChatRouteImport.update({
 const ApiPlanRoute = ApiPlanRouteImport.update({
   id: '/api/plan',
   path: '/api/plan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiLabSessionsRoute = ApiLabSessionsRouteImport.update({
+  id: '/api/lab/sessions',
+  path: '/api/lab/sessions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiLabSessionsSessionIdRoute = ApiLabSessionsSessionIdRouteImport.update({
+  id: '/api/lab/sessions/$sessionId',
+  path: '/api/lab/sessions/$sessionId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTradingAccountsRoute = ApiTradingAccountsRouteImport.update({
+  id: '/api/trading/accounts',
+  path: '/api/trading/accounts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTradingActivitiesRoute = ApiTradingActivitiesRouteImport.update({
+  id: '/api/trading/activities',
+  path: '/api/trading/activities',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTradingConnectRoute = ApiTradingConnectRouteImport.update({
+  id: '/api/trading/connect',
+  path: '/api/trading/connect',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTradingStatusRoute = ApiTradingStatusRouteImport.update({
+  id: '/api/trading/status',
+  path: '/api/trading/status',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedChatThreadIdRoute =
@@ -126,6 +174,14 @@ export interface FileRoutesByFullPath {
   '/projects': typeof AuthenticatedProjectsRoute
   '/security': typeof AuthenticatedSecurityRoute
   '/timeline': typeof AuthenticatedTimelineRoute
+  '/cyber-lab': typeof AuthenticatedCyberLabRoute
+  '/trading': typeof AuthenticatedTradingRoute
+  '/api/lab/sessions': typeof ApiLabSessionsRoute
+  '/api/lab/sessions/$sessionId': typeof ApiLabSessionsSessionIdRoute
+  '/api/trading/accounts': typeof ApiTradingAccountsRoute
+  '/api/trading/activities': typeof ApiTradingActivitiesRoute
+  '/api/trading/connect': typeof ApiTradingConnectRoute
+  '/api/trading/status': typeof ApiTradingStatusRoute
   '/api/chat': typeof ApiChatRoute
   '/api/plan': typeof ApiPlanRoute
   '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
@@ -144,6 +200,14 @@ export interface FileRoutesByTo {
   '/projects': typeof AuthenticatedProjectsRoute
   '/security': typeof AuthenticatedSecurityRoute
   '/timeline': typeof AuthenticatedTimelineRoute
+  '/cyber-lab': typeof AuthenticatedCyberLabRoute
+  '/trading': typeof AuthenticatedTradingRoute
+  '/api/lab/sessions': typeof ApiLabSessionsRoute
+  '/api/lab/sessions/$sessionId': typeof ApiLabSessionsSessionIdRoute
+  '/api/trading/accounts': typeof ApiTradingAccountsRoute
+  '/api/trading/activities': typeof ApiTradingActivitiesRoute
+  '/api/trading/connect': typeof ApiTradingConnectRoute
+  '/api/trading/status': typeof ApiTradingStatusRoute
   '/api/chat': typeof ApiChatRoute
   '/api/plan': typeof ApiPlanRoute
   '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
@@ -164,6 +228,14 @@ export interface FileRoutesById {
   '/_authenticated/projects': typeof AuthenticatedProjectsRoute
   '/_authenticated/security': typeof AuthenticatedSecurityRoute
   '/_authenticated/timeline': typeof AuthenticatedTimelineRoute
+  '/_authenticated/cyber-lab': typeof AuthenticatedCyberLabRoute
+  '/_authenticated/trading': typeof AuthenticatedTradingRoute
+  '/api/lab/sessions': typeof ApiLabSessionsRoute
+  '/api/lab/sessions/$sessionId': typeof ApiLabSessionsSessionIdRoute
+  '/api/trading/accounts': typeof ApiTradingAccountsRoute
+  '/api/trading/activities': typeof ApiTradingActivitiesRoute
+  '/api/trading/connect': typeof ApiTradingConnectRoute
+  '/api/trading/status': typeof ApiTradingStatusRoute
   '/api/chat': typeof ApiChatRoute
   '/api/plan': typeof ApiPlanRoute
   '/_authenticated/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
@@ -184,6 +256,14 @@ export interface FileRouteTypes {
     | '/projects'
     | '/security'
     | '/timeline'
+    | '/cyber-lab'
+    | '/trading'
+    | '/api/lab/sessions'
+    | '/api/lab/sessions/$sessionId'
+    | '/api/trading/accounts'
+    | '/api/trading/activities'
+    | '/api/trading/connect'
+    | '/api/trading/status'
     | '/api/chat'
     | '/api/plan'
     | '/chat/$threadId'
@@ -200,6 +280,14 @@ export interface FileRouteTypes {
     | '/planner'
     | '/projects'
     | '/timeline'
+    | '/cyber-lab'
+    | '/trading'
+    | '/api/lab/sessions'
+    | '/api/lab/sessions/$sessionId'
+    | '/api/trading/accounts'
+    | '/api/trading/activities'
+    | '/api/trading/connect'
+    | '/api/trading/status'
     | '/api/chat'
     | '/api/plan'
     | '/chat/$threadId'
@@ -219,6 +307,14 @@ export interface FileRouteTypes {
     | '/_authenticated/projects'
     | '/_authenticated/security'
     | '/_authenticated/timeline'
+    | '/_authenticated/cyber-lab'
+    | '/_authenticated/trading'
+    | '/api/lab/sessions'
+    | '/api/lab/sessions/$sessionId'
+    | '/api/trading/accounts'
+    | '/api/trading/activities'
+    | '/api/trading/connect'
+    | '/api/trading/status'
     | '/api/chat'
     | '/api/plan'
     | '/_authenticated/chat/$threadId'
@@ -231,6 +327,12 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiPlanRoute: typeof ApiPlanRoute
+  ApiLabSessionsRoute: typeof ApiLabSessionsRoute
+  ApiLabSessionsSessionIdRoute: typeof ApiLabSessionsSessionIdRoute
+  ApiTradingAccountsRoute: typeof ApiTradingAccountsRoute
+  ApiTradingActivitiesRoute: typeof ApiTradingActivitiesRoute
+  ApiTradingConnectRoute: typeof ApiTradingConnectRoute
+  ApiTradingStatusRoute: typeof ApiTradingStatusRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -333,6 +435,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/cyber-lab': {
+      id: '/_authenticated/cyber-lab'
+      path: '/cyber-lab'
+      fullPath: '/cyber-lab'
+      preLoaderRoute: typeof AuthenticatedCyberLabRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/trading': {
+      id: '/_authenticated/trading'
+      path: '/trading'
+      fullPath: '/trading'
+      preLoaderRoute: typeof AuthenticatedTradingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/lab/sessions': {
+      id: '/api/lab/sessions'
+      path: '/api/lab/sessions'
+      fullPath: '/api/lab/sessions'
+      preLoaderRoute: typeof ApiLabSessionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/lab/sessions/$sessionId': {
+      id: '/api/lab/sessions/$sessionId'
+      path: '/api/lab/sessions/$sessionId'
+      fullPath: '/api/lab/sessions/$sessionId'
+      preLoaderRoute: typeof ApiLabSessionsSessionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/trading/accounts': {
+      id: '/api/trading/accounts'
+      path: '/api/trading/accounts'
+      fullPath: '/api/trading/accounts'
+      preLoaderRoute: typeof ApiTradingAccountsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/trading/activities': {
+      id: '/api/trading/activities'
+      path: '/api/trading/activities'
+      fullPath: '/api/trading/activities'
+      preLoaderRoute: typeof ApiTradingActivitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/trading/connect': {
+      id: '/api/trading/connect'
+      path: '/api/trading/connect'
+      fullPath: '/api/trading/connect'
+      preLoaderRoute: typeof ApiTradingConnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/trading/status': {
+      id: '/api/trading/status'
+      path: '/api/trading/status'
+      fullPath: '/api/trading/status'
+      preLoaderRoute: typeof ApiTradingStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/plan': {
       id: '/api/plan'
       path: '/api/plan'
@@ -368,6 +526,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProjectsRoute: typeof AuthenticatedProjectsRoute
   AuthenticatedSecurityRoute: typeof AuthenticatedSecurityRoute
   AuthenticatedTimelineRoute: typeof AuthenticatedTimelineRoute
+  AuthenticatedCyberLabRoute: typeof AuthenticatedCyberLabRoute
+  AuthenticatedTradingRoute: typeof AuthenticatedTradingRoute
   AuthenticatedChatThreadIdRoute: typeof AuthenticatedChatThreadIdRoute
   AuthenticatedMModuleRoute: typeof AuthenticatedMModuleRoute
 }
@@ -383,6 +543,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProjectsRoute: AuthenticatedProjectsRoute,
   AuthenticatedSecurityRoute: AuthenticatedSecurityRoute,
   AuthenticatedTimelineRoute: AuthenticatedTimelineRoute,
+  AuthenticatedCyberLabRoute: AuthenticatedCyberLabRoute,
+  AuthenticatedTradingRoute: AuthenticatedTradingRoute,
   AuthenticatedChatThreadIdRoute: AuthenticatedChatThreadIdRoute,
   AuthenticatedMModuleRoute: AuthenticatedMModuleRoute,
 }
@@ -396,6 +558,12 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ApiChatRoute: ApiChatRoute,
   ApiPlanRoute: ApiPlanRoute,
+  ApiLabSessionsRoute: ApiLabSessionsRoute,
+  ApiLabSessionsSessionIdRoute: ApiLabSessionsSessionIdRoute,
+  ApiTradingAccountsRoute: ApiTradingAccountsRoute,
+  ApiTradingActivitiesRoute: ApiTradingActivitiesRoute,
+  ApiTradingConnectRoute: ApiTradingConnectRoute,
+  ApiTradingStatusRoute: ApiTradingStatusRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
