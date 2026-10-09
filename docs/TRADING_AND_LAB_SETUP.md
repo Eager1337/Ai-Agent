@@ -28,7 +28,7 @@ Eager AI does not run security tools in its web process. It requests isolated se
 
 1. Deploy and secure Kasm Workspaces on a separate host. Configure TLS/HTTPS.
 2. Configure one dedicated Linux desktop workspace image for KASM_LINUX_IMAGE_ID.
-3. Configure a separate VM/server-pool-backed workspace for KASM_VM_IMAGE_ID. This ID must be a workspace image configured in Kasm for your intended VM/remote desktop infrastructure; the app does not provision a hypervisor by itself.
+3. Configure a separate VM/server-pool-backed workspace for KASM_VM_IMAGE_ID. This ID must be a workspace image configured in Kasm for your intended VM/remote desktop infrastructure; the app does not provision a hypervisor by itself. If your Kasm workspace requires a server-pool target, also set KASM_VM_SERVER_ID to the approved server ID.
 4. Create a Kasm Developer API key with only the permissions required to request and inspect sessions (typically User and Users Auth Session for the configured deployment). Do not grant Global Admin. Set KASM_URL, KASM_API_KEY, KASM_API_KEY_SECRET, KASM_LINUX_IMAGE_ID, and KASM_VM_IMAGE_ID as server-side secrets/configuration.
 5. Configure disposable profiles, no host filesystem mounts, restricted egress, and no access to cloud metadata or unrelated private networks. Use only training images and targets you own or have written authorization to test.
 6. Apply the same Supabase migration from step 1. The session API enforces per-user ownership and a maximum of two active sessions per user, and sets a one-hour expiry in application records. Also configure Kasm's own server-side session/idle timeouts: application expiry metadata alone does not stop a provider VM.
