@@ -9,6 +9,7 @@ export const Route = createFileRoute("/api/trading/connect")({
         try { auth = await authenticateRequest(request); }
         catch { return Response.json({ error: "Trading integration is not configured on the server." }, { status: 503 }); }
         if (!auth) return Response.json({ error: "Sign in to connect a brokerage." }, { status: 401 });
+        if (auth.email !== "ebeaver091@gmail.com" && !auth.paidAccess) return Response.json({ error: "Paid access is required. Contact the workspace owner after payment." }, { status: 403 });
         try {
           const client = getSnapTradeClient();
           const providerUserId = "eager_" + auth.userId.replace(/-/g, "");
