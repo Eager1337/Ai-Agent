@@ -31,6 +31,7 @@ function CasesPage() {
   const [confirmOp, setConfirmOp] = useState<string | null>(null);
   const [agreed, setAgreed] = useState(false);
   const [caseError, setCaseError] = useState<string | null>(null);
+  const [confirmError, setConfirmError] = useState<string | null>(null);
   const current = cases.find((c) => c.id === sel) ?? (creating ? undefined : cases[0]);
   const { data: audit = [] } = useAudit(current?.id);
 
@@ -51,8 +52,12 @@ function CasesPage() {
     try {
       const code = `CASE-${new Date().getFullYear()}-${String(cases.length + 1).padStart(4, "0")}`;
       const row = await addCase.mutateAsync({ ...form, name: form.name.trim(), scope: form.scope.trim(), code, investigator: actor, start_date: form.start_date || null, end_date: form.end_date || null });
-      await addAudit.mutateAsync({ case_id: row.id, actor, action: `Case opened; user affirmed authorization; type=${form.authorization_status}; ref=${form.auth_ref || "n/a"}; scope=${form.scope.trim()}` });
       setSel(row.id); setCreating(false); setForm(empty); setAgreed(false);
+      try {
+        await addAudit.mutateAsync({ case_id: row.id, actor, action: `Case opened; user affirmed authorization; type=${form.authorization_status}; ref=${form.auth_ref || "n/a"}; scope=${form.scope.trim()}` });
+      } catch {
+        setCaseError("The case was created, but its initial audit entry failed. Reopen the case and verify the audit trail before continuing.");
+      }
     } catch {
       setCaseError("The case could not be saved. Check your connection and database permissions, then try again.");
     }
@@ -125,7 +130,7 @@ function CasesPage() {
               </dl>
               <div className="mt-4 flex flex-wrap gap-2">
                 {["Prepare OSINT research plan", "Review supplied evidence", "Review scoped assessment plan"].map((op) => (
-                  <button key={op} className={btnGhost} onClick={() => { setConfirmOp(op); setAgreed(false); }}>{op}</button>))}
+                  <button key={op} className={btnGhost} onClick={() => { setConfirmOp(op); setAgreed(false); setConfirmError(null); }}>{op}</button>))}
               </div>
             </Panel>
             <Panel title="Audit trail">
@@ -146,9 +151,18 @@ function CasesPage() {
             <p className="text-sm text-muted-foreground mt-2">{confirmOp} · {current.targets || "—"}<br />Basis: {current.authorization_status} ({current.auth_ref || "no ref"})</p>
             <label className="flex gap-2 mt-4 text-sm items-start"><input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-1 accent-primary" />
               I confirm this activity is within the authorized scope of this case.</label>
+            {confirmError && <p role="alert" className="text-sm text-destructive mt-3">{confirmError}</p>}
             <div className="mt-5 flex gap-2 justify-end">
               <button className={btnGhost} onClick={() => setConfirmOp(null)}>Cancel</button>
-              <button className={btn} disabled={!agreed} onClick={async () => { await addAudit.mutateAsync({ case_id: current.id, actor, action: `Authorization confirmed for: ${confirmOp}` }); setConfirmOp(null); }}>Confirm & record</button>
+              <button className={btn} disabled={!agreed || addAudit.isPending} onClick={async () => {
+                setConfirmError(null);
+                try {
+                  await addAudit.mutateAsync({ case_id: current.id, actor, action: `Authorization confirmed for: ${confirmOp}; no external action executed` });
+                  setConfirmOp(null);
+                } catch {
+                  setConfirmError("The confirmation could not be recorded. Nothing was executed; retry after checking your connection.");
+                }
+              }}>{addAudit.isPending ? "Saving…" : "Confirm & record"}</button>
             </div>
           </div>
         </div>
