@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
-import { PageTitle, Panel, btn, btnGhost, input } from "@/components/soc/Shell";
+import { PageTitle, Panel, btn, input } from "@/components/soc/Shell";
 import { streamPost } from "@/lib/stream";
 
 export const Route = createFileRoute("/_authenticated/chat/$threadId")({
