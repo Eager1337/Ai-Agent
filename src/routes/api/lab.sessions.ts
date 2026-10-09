@@ -27,7 +27,7 @@ export const Route = createFileRoute("/api/lab/sessions")({
         catch { return Response.json({ error: "KASM_URL is invalid." }, { status: 503 }); }
         if (origin.protocol !== "https:") return Response.json({ error: "KASM_URL must use HTTPS." }, { status: 503 });
 
-        const active = await auth.db.from("cyber_lab_sessions").select("id").eq("user_id", auth.userId).eq("status", "running").gt("expires_at", new Date().toISOString());
+        const active = await auth.db.from("cyber_lab_sessions").select("id").eq("user_id", auth.userId).in("status", ["starting", "running"]).gt("expires_at", new Date().toISOString());
         if (active.error) return Response.json({ error: "Could not check existing lab sessions." }, { status: 503 });
         if ((active.data ?? []).length >= 2) return Response.json({ error: "You already have two active lab sessions. Stop one before starting another." }, { status: 429 });
 
