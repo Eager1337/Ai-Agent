@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { Snaptrade } from "snaptrade-typescript-sdk";
 import { userClient } from "@/lib/ai.server";
 
-export type AuthenticatedRequest = { userId: string; db: ReturnType<typeof createClient> };
+export type AuthenticatedRequest = { userId: string; email: string; paidAccess: boolean; db: ReturnType<typeof createClient> };
 
 export async function authenticateRequest(request: Request): Promise<AuthenticatedRequest | null> {
   const user = userClient(request);
@@ -13,7 +13,7 @@ export async function authenticateRequest(request: Request): Promise<Authenticat
   const url = process.env["SUPABASE_URL"];
   const serviceKey = process.env["SUPABASE_SERVICE_ROLE_KEY"];
   if (!url || !serviceKey) throw new Error("SUPABASE_SERVICE_ROLE_KEY is not configured on the server");
-  return { userId: data.user.id, db: createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } }) };
+  return { userId: data.user.id, email: data.user.email?.toLowerCase() ?? "", paidAccess: data.user.app_metadata?.paid_access === true, db: createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } }) };
 }
 
 function encryptionKey(): Buffer {

@@ -9,6 +9,7 @@ export const Route = createFileRoute("/api/trading/activities")({
         try { auth = await authenticateRequest(request); }
         catch { return Response.json({ error: "Trading integration is not configured on the server." }, { status: 503 }); }
         if (!auth) return Response.json({ error: "Unauthorized" }, { status: 401 });
+        if (auth.email !== "ebeaver091@gmail.com" && !auth.paidAccess) return Response.json({ error: "Paid access is required. Contact the workspace owner after payment." }, { status: 403 });
         let payload: { accountId?: unknown };
         try { payload = await request.json() as { accountId?: unknown }; }
         catch { return Response.json({ error: "Invalid JSON" }, { status: 400 }); }

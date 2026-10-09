@@ -9,6 +9,7 @@ export const Route = createFileRoute("/api/trading/accounts")({
         try { auth = await authenticateRequest(request); }
         catch { return Response.json({ error: "Trading integration is not configured on the server." }, { status: 503 }); }
         if (!auth) return Response.json({ error: "Unauthorized" }, { status: 401 });
+        if (auth.email !== "ebeaver091@gmail.com" && !auth.paidAccess) return Response.json({ error: "Paid access is required. Contact the workspace owner after payment." }, { status: 403 });
         try {
           const stored = await auth.db.from("trading_provider_users").select("provider_user_id,user_secret_ciphertext,user_secret_iv,user_secret_tag").eq("user_id", auth.userId).maybeSingle();
           if (stored.error) throw new Error("Could not read connector state");
