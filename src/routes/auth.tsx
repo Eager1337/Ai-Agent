@@ -1,69 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
-import { btn, btnGhost, input } from "@/components/soc/Shell";
-
-export const Route = createFileRoute("/auth")({
-  head: () => ({
-    meta: [
-      { title: "Sign in — Eager AI" },
-      { name: "description", content: "Sign in to the Eager AI workspace and intelligence command center." },
-      { property: "og:title", content: "Sign in — Eager AI" },
-      { property: "og:description", content: "Sign in to the Eager AI workspace and intelligence command center." },
-    ],
-  }),
-  component: AuthPage,
-});
-
-function AuthPage() {
-  const nav = useNavigate();
-  const [mode, setMode] = useState<"in" | "up">("in");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [msg, setMsg] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => { if (data.session) nav({ to: "/dashboard" }); });
-    const { data } = supabase.auth.onAuthStateChange((_e, s) => { if (s) nav({ to: "/dashboard" }); });
-    return () => data.subscription.unsubscribe();
-  }, [nav]);
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault(); setBusy(true); setMsg(null);
-    if (mode === "in") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setMsg(error.message);
-    } else {
-      const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } });
-      if (error) setMsg(error.message);
-    }
-    setBusy(false);
-  };
-
-  const google = async () => {
-    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (r.error) setMsg(r.error.message);
-  };
-
-  return (
-    <div className="min-h-screen grid place-items-center grid-bg px-4">
-      <div className="w-full max-w-sm border bg-card rounded-md p-6">
-        <div className="font-mono text-sm font-bold text-primary">EAGER//AI</div>
-        <h1 className="text-xl font-semibold mt-2">{mode === "in" ? "Sign in" : "Create account"}</h1>
-        <p className="text-sm text-muted-foreground mt-1">Authorized use only.</p>
-        <form onSubmit={submit} className="mt-5 space-y-3">
-          <input className={input} type="email" required placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <input className={input} type="password" required minLength={6} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          <button className={btn + " w-full justify-center"} disabled={busy}>{mode === "in" ? "Sign in" : "Sign up"}</button>
-        </form>
-        <button className={btnGhost + " w-full justify-center mt-2"} onClick={google}>Continue with Google</button>
-        {msg && <p className="text-sm text-warning mt-3">{msg}</p>}
-        <button className="mt-4 text-xs text-muted-foreground hover:text-primary" onClick={() => setMode(mode === "in" ? "up" : "in")}>
-          {mode === "in" ? "No account? Sign up" : "Have an account? Sign in"}
-        </button>
-      </div>
-    </div>
-  );
+import { btn, input } from "@/components/soc/Shell";
+const OWNER_EMAIL = "ebeaver091@gmail.com";
+export const Route = createFileRoute("/auth")({head:()=>({meta:[{title:"Sign in — Eager AI"},{name:"description",content:"Private Eager AI workspace sign-in and service pricing."}]}),component:AuthPage});
+function AuthPage(){
+ const nav=useNavigate();const [email,setEmail]=useState("");const [password,setPassword]=useState("");const [msg,setMsg]=useState("");const [busy,setBusy]=useState(false);const [showPrices,setShowPrices]=useState(false);
+ useEffect(()=>{supabase.auth.getSession().then(({data})=>{if(data.session&&data.session.user.email?.toLowerCase()===OWNER_EMAIL)nav({to:"/dashboard"});else if(data.session)supabase.auth.signOut();});},[nav]);
+ async function submit(e:React.FormEvent){e.preventDefault();setMsg("");setShowPrices(false);if(email.trim().toLowerCase()!==OWNER_EMAIL){setMsg("Come on — this service requires a paid plan. The owner account is the only account currently enabled for free access.");setShowPrices(true);return;}setBusy(true);try{const {error}=await supabase.auth.signInWithPassword({email:OWNER_EMAIL,password});if(error)setMsg("Sign-in failed. Check the email and password configured in the secure authentication provider.");else nav({to:"/dashboard"});}catch{setMsg("Could not sign in. Check your connection and try again.");}finally{setBusy(false);}}
+ return <div className="min-h-screen grid place-items-center grid-bg px-4 py-8"><div className="w-full max-w-xl border bg-card rounded-md p-6"><div className="font-mono text-sm font-bold text-primary">EAGER//AI</div><h1 className="text-2xl font-semibold mt-3">Private workspace</h1><p className="text-sm text-muted-foreground mt-2">Owner access is free. Other accounts require a paid plan and manual activation after payment verification.</p><form onSubmit={submit} className="mt-5 space-y-3"><label className="block text-sm">Email<input className={input+" mt-1"} type="email" required autoComplete="username" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)}/></label><label className="block text-sm">Password<input className={input+" mt-1"} type="password" required autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Your account password"/></label><button className={btn+" w-full justify-center"} disabled={busy}>{busy?"Signing in…":"Sign in"}</button></form>{msg&&<div role="alert" className="mt-4 border rounded-md p-3 text-sm">{msg}</div>}{showPrices&&<div className="mt-4"><h2 className="font-semibold">Suggested service prices</h2><p className="text-xs text-muted-foreground mt-1">Starter prices in new leones (NLe), for owner approval before launch.</p><div className="grid sm:grid-cols-3 gap-2 mt-3">{[{name:"Starter",price:"NLe 50",period:"per month",desc:"Core AI workspace"},{name:"Pro",price:"NLe 150",period:"per month",desc:"Trading analytics + cyber labs"},{name:"Annual",price:"NLe 1,200",period:"per year",desc:"Pro access for 12 months"}].map(p=><div key={p.name} className="border rounded-md p-3"><div className="label-mono">{p.name}</div><div className="text-xl font-semibold mt-2">{p.price}</div><div className="text-xs text-muted-foreground">{p.period}</div><p className="text-xs mt-2">{p.desc}</p></div>)}</div><div className="border rounded-md p-3 mt-3"><div className="font-medium text-sm">Manual Afrimoney payment</div><div className="font-mono text-lg mt-1">033695803</div><p className="text-xs text-muted-foreground mt-2">Send the selected amount, keep your transaction reference, then contact the owner for verification and account activation. Do not share your wallet PIN. This site does not yet verify mobile-money payments automatically, so payment alone will not unlock access until approved.</p><a className="text-sm text-primary underline inline-block mt-2" href="https://www.africell.sl/afrimoney_services/merchant-payments/" target="_blank" rel="noreferrer">Official Afrimoney payment information</a></div></div>}<p className="text-xs text-muted-foreground mt-5">For safety, the password is checked by the authentication provider and is not stored in this page's code. Change any password that has been shared in a chat or used elsewhere.</p></div></div>;
 }
