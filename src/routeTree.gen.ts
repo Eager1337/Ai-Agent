@@ -14,11 +14,13 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAgentsRouteImport } from './routes/_authenticated/agents'
 import { Route as AuthenticatedCasesRouteImport } from './routes/_authenticated/cases'
+import { Route as AuthenticatedConversationsRouteImport } from './routes/_authenticated/conversations'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedIndicatorsRouteImport } from './routes/_authenticated/indicators'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
 import { Route as AuthenticatedPlannerRouteImport } from './routes/_authenticated/planner'
 import { Route as AuthenticatedProjectsRouteImport } from './routes/_authenticated/projects'
+import { Route as AuthenticatedSecurityRouteImport } from './routes/_authenticated/security'
 import { Route as AuthenticatedTimelineRouteImport } from './routes/_authenticated/timeline'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiPlanRouteImport } from './routes/api/plan'
@@ -54,6 +56,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedConversationsRoute = AuthenticatedConversationsRouteImport.update({
+  id: '/conversations',
+  path: '/conversations',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedIndicatorsRoute = AuthenticatedIndicatorsRouteImport.update({
   id: '/indicators',
   path: '/indicators',
@@ -72,6 +79,11 @@ const AuthenticatedPlannerRoute = AuthenticatedPlannerRouteImport.update({
 const AuthenticatedProjectsRoute = AuthenticatedProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSecurityRoute = AuthenticatedSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedTimelineRoute = AuthenticatedTimelineRouteImport.update({
@@ -106,11 +118,15 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/agents': typeof AuthenticatedAgentsRoute
   '/cases': typeof AuthenticatedCasesRoute
+  '/conversations': typeof AuthenticatedConversationsRoute
+  '/conversations': typeof AuthenticatedConversationsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/indicators': typeof AuthenticatedIndicatorsRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/planner': typeof AuthenticatedPlannerRoute
   '/projects': typeof AuthenticatedProjectsRoute
+  '/security': typeof AuthenticatedSecurityRoute
+  '/security': typeof AuthenticatedSecurityRoute
   '/timeline': typeof AuthenticatedTimelineRoute
   '/api/chat': typeof ApiChatRoute
   '/api/plan': typeof ApiPlanRoute
@@ -140,11 +156,13 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/agents': typeof AuthenticatedAgentsRoute
   '/_authenticated/cases': typeof AuthenticatedCasesRoute
+  '/_authenticated/conversations': typeof AuthenticatedConversationsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/indicators': typeof AuthenticatedIndicatorsRoute
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/planner': typeof AuthenticatedPlannerRoute
   '/_authenticated/projects': typeof AuthenticatedProjectsRoute
+  '/_authenticated/security': typeof AuthenticatedSecurityRoute
   '/_authenticated/timeline': typeof AuthenticatedTimelineRoute
   '/api/chat': typeof ApiChatRoute
   '/api/plan': typeof ApiPlanRoute
@@ -158,11 +176,13 @@ export interface FileRouteTypes {
     | '/auth'
     | '/agents'
     | '/cases'
+    | '/conversations'
     | '/dashboard'
     | '/indicators'
     | '/notes'
     | '/planner'
     | '/projects'
+    | '/security'
     | '/timeline'
     | '/api/chat'
     | '/api/plan'
@@ -191,11 +211,13 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/agents'
     | '/_authenticated/cases'
+    | '/_authenticated/conversations'
     | '/_authenticated/dashboard'
     | '/_authenticated/indicators'
     | '/_authenticated/notes'
     | '/_authenticated/planner'
     | '/_authenticated/projects'
+    | '/_authenticated/security'
     | '/_authenticated/timeline'
     | '/api/chat'
     | '/api/plan'
@@ -248,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCasesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/conversations': {
+      id: '/_authenticated/conversations'
+      path: '/conversations'
+      fullPath: '/conversations'
+      preLoaderRoute: typeof AuthenticatedConversationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -281,6 +310,13 @@ declare module '@tanstack/react-router' {
       path: '/projects'
       fullPath: '/projects'
       preLoaderRoute: typeof AuthenticatedProjectsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/security': {
+      id: '/_authenticated/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof AuthenticatedSecurityRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/timeline': {
@@ -324,11 +360,13 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAgentsRoute: typeof AuthenticatedAgentsRoute
   AuthenticatedCasesRoute: typeof AuthenticatedCasesRoute
+  AuthenticatedConversationsRoute: typeof AuthenticatedConversationsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedIndicatorsRoute: typeof AuthenticatedIndicatorsRoute
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedPlannerRoute: typeof AuthenticatedPlannerRoute
   AuthenticatedProjectsRoute: typeof AuthenticatedProjectsRoute
+  AuthenticatedSecurityRoute: typeof AuthenticatedSecurityRoute
   AuthenticatedTimelineRoute: typeof AuthenticatedTimelineRoute
   AuthenticatedChatThreadIdRoute: typeof AuthenticatedChatThreadIdRoute
   AuthenticatedMModuleRoute: typeof AuthenticatedMModuleRoute
@@ -337,11 +375,13 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAgentsRoute: AuthenticatedAgentsRoute,
   AuthenticatedCasesRoute: AuthenticatedCasesRoute,
+  AuthenticatedConversationsRoute: AuthenticatedConversationsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedIndicatorsRoute: AuthenticatedIndicatorsRoute,
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedPlannerRoute: AuthenticatedPlannerRoute,
   AuthenticatedProjectsRoute: AuthenticatedProjectsRoute,
+  AuthenticatedSecurityRoute: AuthenticatedSecurityRoute,
   AuthenticatedTimelineRoute: AuthenticatedTimelineRoute,
   AuthenticatedChatThreadIdRoute: AuthenticatedChatThreadIdRoute,
   AuthenticatedMModuleRoute: AuthenticatedMModuleRoute,
