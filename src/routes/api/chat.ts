@@ -7,6 +7,11 @@ export const Route = createFileRoute("/api/chat")({
       POST: async ({ request }) => {
         const u = userClient(request);
         if (!u) return new Response("Unauthorized. Sign in and try again.", { status: 401 });
+        const { data: auth } = await u.sb.auth.getUser(u.token);
+        if (!auth.user) return new Response("Unauthorized", { status: 401 });
+        if (auth.user.email?.toLowerCase() !== "ebeaver091@gmail.com" && auth.user.app_metadata?.paid_access !== true) {
+          return new Response("Paid access is required. Contact the workspace owner after payment.", { status: 403 });
+        }
 
         let payload: { threadId?: unknown; content?: unknown };
         try {
