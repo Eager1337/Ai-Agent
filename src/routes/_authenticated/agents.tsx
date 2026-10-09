@@ -17,18 +17,20 @@ export const Route = createFileRoute("/_authenticated/agents")({
 });
 
 function AgentsPage() {
-  const { data: agents = [], isLoading } = useAgents();
+  const { data: agents = [], isLoading, error: agentsError } = useAgents();
   const addAgent = useInsert("agents", ["agents"]);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [role, setRole] = useState<string>(AGENT_ROLES[0]!);
   const [instructions, setInstructions] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
 
   return (
     <>
       <PageTitle code="SEC-16 // AGENT TEAM" title="Agent Team">
         <button className={btn} onClick={() => setOpen(!open)}>+ Create agent</button>
       </PageTitle>
+      {agentsError && <p role="alert" className="border border-destructive/40 rounded-sm p-3 mb-4 text-sm text-destructive">Agents could not be loaded. Check your sign-in and database permissions, then refresh.</p>}
       {open && (
         <Panel title="New agent" className="mb-4">
           <div className="grid sm:grid-cols-2 gap-3">
@@ -39,9 +41,18 @@ function AgentsPage() {
               <textarea className={input + " mt-1 h-20"} value={instructions} onChange={(e) => setInstructions(e.target.value)} placeholder="Tone, focus areas, report format…" /></label>
           </div>
           <div className="flex gap-2 mt-3">
-            <button className={btn} disabled={!name || addAgent.isPending} onClick={async () => { await addAgent.mutateAsync({ name, role, instructions }); setName(""); setInstructions(""); setOpen(false); }}>Create</button>
-            <button className={btnGhost} onClick={() => setOpen(false)}>Cancel</button>
+            <button className={btn} disabled={!name.trim() || addAgent.isPending} onClick={async () => {
+              setFormError(null);
+              try {
+                await addAgent.mutateAsync({ name: name.trim(), role, instructions: instructions.trim() });
+                setName(""); setInstructions(""); setOpen(false);
+              } catch {
+                setFormError("The agent could not be saved. Check your connection and database permissions, then try again.");
+              }
+            }}>{addAgent.isPending ? "Saving…" : "Create"}</button>
+            <button className={btnGhost} onClick={() => { setOpen(false); setFormError(null); }}>Cancel</button>
           </div>
+          {formError && <p role="alert" className="text-sm text-destructive mt-3">{formError}</p>}
         </Panel>
       )}
       {isLoading ? <div className="h-32 animate-pulse bg-muted rounded-md" /> : agents.length === 0 ? (
@@ -59,6 +70,7 @@ function AgentCard({ a }: { a: AgentRow }) {
   const { data: threads = [] } = useThreads(a.id);
   const addThread = useInsert("threads", ["threads"]);
   const nav = useNavigate();
+  const [threadError, setThreadError] = useState<string | null>(null);
   return (
     <div className="border bg-card rounded-md p-4 flex flex-col">
       <div className="flex items-center gap-3">
@@ -76,9 +88,18 @@ function AgentCard({ a }: { a: AgentRow }) {
         </ul>
       </div>
       <button className={btn + " mt-3 justify-center"} disabled={addThread.isPending}
-        onClick={async () => { const t = await addThread.mutateAsync({ agent_id: a.id }); nav({ to: "/chat/$threadId", params: { threadId: t.id } }); }}>
-        New conversation
+        onClick={async () => {
+          setThreadError(null);
+          try {
+            const t = await addThread.mutateAsync({ agent_id: a.id, title: "New conversation" });
+            nav({ to: "/chat/$threadId", params: { threadId: t.id } });
+          } catch {
+            setThreadError("Could not create a conversation. Check your sign-in and database permissions, then retry.");
+          }
+        }}>
+        {addThread.isPending ? "Creating…" : "New conversation"}
       </button>
+      {threadError && <p role="alert" className="text-xs text-destructive mt-2">{threadError}</p>}
     </div>
   );
 }
