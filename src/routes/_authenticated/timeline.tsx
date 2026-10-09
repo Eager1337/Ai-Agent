@@ -13,8 +13,9 @@ export const Route = createFileRoute("/_authenticated/timeline")({
   }),
   component: () => (
     <>
-      <PageTitle code="SEC-13 // TIMELINE" title="Investigation Timeline" />
-      <Panel title="All events">
+      <PageTitle code="SEC-13 // TIMELINE" title="Investigation Timeline"><span className="border border-warning/40 bg-warning/5 rounded-sm px-2 py-1 font-mono text-[10px] text-warning">SIMULATED LAB DATA</span></PageTitle>
+      <Panel title="Sample events">
+        <p className="text-xs text-muted-foreground mb-3">Illustrative events for interface preview only. These entries are not connected to a live SIEM or case event stream.</p>
         <ol className="border-l ml-1">
           {timeline.map((e) => (
             <li key={e.t} className="pl-5 pb-5 relative">
