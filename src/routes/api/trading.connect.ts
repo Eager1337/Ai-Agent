@@ -33,10 +33,12 @@ export const Route = createFileRoute("/api/trading/connect")({
           const { decryptSecret } = await import("@/lib/integrations.server");
           const userSecret = decryptSecret({ ciphertext: providerUser.user_secret_ciphertext, iv: providerUser.user_secret_iv, tag: providerUser.user_secret_tag });
           const callback = new URL("/trading?connection=complete", new URL(request.url).origin).toString();
-          const portal = unwrapData(await client.authentication.loginSnapTradeUser(
-            { userId: providerUser.provider_user_id, userSecret },
-            { connectionType: "read", customRedirect: callback },
-          ));
+          const portal = unwrapData(await client.authentication.loginSnapTradeUser({
+            userId: providerUser.provider_user_id,
+            userSecret,
+            connectionType: "read",
+            customRedirect: callback,
+          }));
           const redirectURI = portal["redirectURI"] ?? portal["redirectUri"] ?? portal["redirect_uri"] ?? portal["url"];
           if (typeof redirectURI !== "string" || !redirectURI.startsWith("https://")) throw new Error("SnapTrade did not return a valid secure connection portal URL");
           return Response.json({ redirectUrl: redirectURI, permission: "read-only" });
