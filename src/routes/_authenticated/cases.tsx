@@ -71,8 +71,9 @@ function CasesPage() {
   return (
     <>
       <PageTitle code="SEC-01 // CASES" title="Authorized Cases">
-        <button className={btn} onClick={() => setCreating(true)}>+ New case</button>
+        <button className={btn} onClick={() => { setCreating(true); setCaseError(null); setAgreed(false); }}>+ New case</button>
       </PageTitle>
+      {caseError && !creating && <p role="alert" className="border border-destructive/40 rounded-sm p-3 mb-4 text-sm text-destructive">{caseError}</p>}
       <div className="grid lg:grid-cols-[340px_1fr] gap-4">
         <Panel title={`${cases.length} cases`}>
           {isLoading ? <div className="h-20 animate-pulse bg-muted rounded" /> : cases.length === 0 ? <p className="text-sm text-muted-foreground">No cases yet.</p> : (
