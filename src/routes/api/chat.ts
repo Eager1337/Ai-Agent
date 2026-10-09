@@ -33,10 +33,24 @@ export const Route = createFileRoute("/api/chat")({
           const thread = threadResult.data;
           if (!thread) return new Response("Conversation not found or access denied.", { status: 404 });
 
-          const insertResult = await u.sb.from("messages").insert({ thread_id: threadId, role: "user", content });
-          if (insertResult.error) {
-            console.error("User message insert failed.");
-            return new Response("Could not save your message. Please try again.", { status: 500 });
+          // Avoid duplicating the last user message when the client retries after a stream failure.
+          const lastMessageResult = await u.sb.from("messages")
+            .select("role, content")
+            .eq("thread_id", threadId)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (lastMessageResult.error) {
+            console.error("Last message lookup failed.");
+            return new Response("Could not verify conversation state. Please try again.", { status: 500 });
+          }
+          const isRetry = lastMessageResult.data?.role === "user" && lastMessageResult.data.content === content;
+          if (!isRetry) {
+            const insertResult = await u.sb.from("messages").insert({ thread_id: threadId, role: "user", content });
+            if (insertResult.error) {
+              console.error("User message insert failed.");
+              return new Response("Could not save your message. Please try again.", { status: 500 });
+            }
           }
 
           if (thread.title === "New conversation") {
