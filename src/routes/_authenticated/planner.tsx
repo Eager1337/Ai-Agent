@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/planner")({
 });
 
 function Planner() {
-  const { data: cases = [] } = useCases();
+  const { data: cases = [], error: casesError } = useCases();
   const saveNote = useInsert("notes", ["notes"]);
   const [details, setDetails] = useState("");
   const [iocs, setIocs] = useState("");
@@ -24,6 +24,7 @@ function Planner() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const loadCase = (id: string) => {
     const c = cases.find((x) => x.id === id); if (!c) return;
@@ -41,6 +42,7 @@ function Planner() {
       <PageTitle code="SEC-02 // PLANNER" title="Investigation Planner" />
       <div className="grid lg:grid-cols-[420px_1fr] gap-4">
         <Panel title="Input">
+          {casesError && <p role="alert" className="text-xs text-destructive mb-2">Saved cases could not be loaded. You can still enter case details manually.</p>}
           {cases.length > 0 && (
             <select className={input + " mb-3"} defaultValue="" onChange={(e) => loadCase(e.target.value)}>
               <option value="" disabled>Load from a case…</option>
@@ -54,9 +56,10 @@ function Planner() {
           <button className={btn + " mt-3 w-full justify-center"} disabled={busy || !details.trim()} onClick={run}>{busy ? "Analyzing…" : "Generate plan"}</button>
         </Panel>
         <Panel title="Plan" action={out && !busy ? (
-          <button className="font-mono text-xs text-primary" disabled={saved} onClick={async () => { await saveNote.mutateAsync({ title: `Investigation plan — ${details.split("\n")[0]!.slice(0, 60)}`, body: out }); setSaved(true); }}>{saved ? "Saved ✓" : "Save as note"}</button>
+          <button className="font-mono text-xs text-primary" disabled={saved || saveNote.isPending} onClick={async () => { setSaveError(null); try { await saveNote.mutateAsync({ title: `Investigation plan — ${details.split("\n")[0]!.slice(0, 60)}`, body: out }); setSaved(true); } catch { setSaveError("Could not save the plan as a note. Check your connection and try again."); } }}>{saved ? "Saved ✓" : saveNote.isPending ? "Saving…" : "Save as note"}</button>
         ) : undefined}>
-          {err && <p className="text-sm text-destructive">{err}</p>}
+          {err && <p role="alert" className="text-sm text-destructive">{err}</p>}
+          {saveError && <p role="alert" className="text-sm text-destructive">{saveError}</p>}
           {!out && !err && <p className="text-sm text-muted-foreground">{busy ? "Working…" : "Your prioritized steps and evidence summary will appear here."}</p>}
           <div className="text-sm leading-relaxed [&_h2]:font-semibold [&_h2]:text-primary [&_h2]:mt-4 [&_ol]:list-decimal [&_ul]:list-disc [&_ol]:pl-5 [&_ul]:pl-5 [&_li]:mt-1 [&_table]:text-xs [&_td]:border [&_td]:px-2 [&_th]:border [&_th]:px-2"><ReactMarkdown>{out}</ReactMarkdown></div>
         </Panel>

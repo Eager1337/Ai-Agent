@@ -21,9 +21,11 @@ function IndicatorsPage() {
   return (
     <>
       <PageTitle code="SEC-14 // INDICATORS" title="Indicators of Compromise">
-        <input className={input + " w-64"} placeholder="Filter indicators…" value={q} onChange={(e) => setQ(e.target.value)} />
+        <span className="border border-warning/40 bg-warning/5 rounded-sm px-2 py-1 font-mono text-[10px] text-warning">SIMULATED LAB DATA</span>
+        <input className={input + " w-64"} aria-label="Filter indicators" placeholder="Filter indicators…" value={q} onChange={(e) => setQ(e.target.value)} />
       </PageTitle>
-      <Panel title={`${rows.length} indicators`}>
+      <Panel title={`${rows.length} sample indicators`}>
+        <p className="text-xs text-muted-foreground mb-3">These are illustrative training indicators, not live threat-intelligence feeds or confirmed detections. Verify all indicators against trusted sources before taking action.</p>
         <div className="overflow-x-auto">
           <table className="w-full font-mono text-xs">
             <thead><tr className="text-left text-muted-foreground border-b">{["Type", "Value", "Severity", "Case", "First seen"].map((h) => <th key={h} className="py-2 pr-4 font-normal uppercase tracking-wider">{h}</th>)}</tr></thead>
