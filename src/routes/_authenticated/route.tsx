@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_authenticated")({
  beforeLoad:async()=>{
   const {data,error}=await supabase.auth.getUser();
   if(error||!data.user)throw redirect({to:"/auth"});
-  if(data.user.email?.toLowerCase()!==OWNER_EMAIL){await supabase.auth.signOut();throw redirect({to:"/auth"});}
+  if(data.user.email?.toLowerCase()!==OWNER_EMAIL && data.user.app_metadata?.paid_access!==true){await supabase.auth.signOut();throw redirect({to:"/auth"});}
   return {user:data.user};
  },
  component:()=> <Shell><Outlet/></Shell>,
