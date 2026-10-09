@@ -9,8 +9,9 @@ const workspace = [
   { to: "/notes", label: "Notes" },
 ] as const;
 const core = [
-  { to: "/", label: "Overview" },
+  { to: "/dashboard", label: "Overview" },
   { to: "/cases", label: "Cases" },
+  { to: "/planner", label: "AI Planner" },
   { to: "/agents", label: "Agent Team" },
   { to: "/indicators", label: "Indicators" },
   { to: "/timeline", label: "Timeline" },
@@ -39,7 +40,7 @@ export function Shell({ children }: { children: ReactNode }) {
         <nav className="flex-1 overflow-y-auto py-3">
           <div className="label-mono px-3 pb-1">Command Center</div>
           {core.map((l) => (
-            <Link key={l.to} to={l.to} className={linkCls} activeProps={{ className: activeCls }} activeOptions={{ exact: l.to === "/" }}>{l.label}</Link>
+            <Link key={l.to} to={l.to} className={linkCls} activeProps={{ className: activeCls }} activeOptions={{ exact: true }}>{l.label}</Link>
           ))}
           <div className="label-mono px-3 pb-1 pt-4">Workspace</div>
           {workspace.map((l) => (
@@ -62,7 +63,7 @@ export function Shell({ children }: { children: ReactNode }) {
           <button onClick={signOut} className="md:hidden font-mono text-xs text-primary">Sign out</button>
         </header>
         <nav className="md:hidden flex gap-1 overflow-x-auto border-b px-2 py-1 bg-panel">
-          {all.map((l) => <Link key={l.to} to={l.to} className="px-2 py-1 text-xs whitespace-nowrap text-muted-foreground" activeProps={{ className: "!text-primary" }} activeOptions={{ exact: l.to === "/" }}>{l.label}</Link>)}
+          {all.map((l) => <Link key={l.to} to={l.to} className="px-2 py-1 text-xs whitespace-nowrap text-muted-foreground" activeProps={{ className: "!text-primary" }} activeOptions={{ exact: true }}>{l.label}</Link>)}
         </nav>
         <main className="flex-1 p-4 md:p-6 grid-bg">{children}</main>
       </div>
