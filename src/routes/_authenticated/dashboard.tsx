@@ -19,9 +19,9 @@ function Overview() {
   const { data: cases = [] } = useCases(); const { data: agents = [] } = useAgents();
   const stats = [
     { k: "Active cases", v: cases.filter((c) => c.status !== "Closed").length },
-    { k: "Open investigations", v: 4 },
-    { k: "Evidence items", v: 37 },
-    { k: "Indicators", v: indicators.length },
+    { k: "Open investigations", v: cases.filter((c) => c.status !== "Closed").length },
+    { k: "Evidence indexed", v: 0 },
+    { k: "Sample indicators", v: indicators.length },
   ];
   return (
     <>
@@ -35,7 +35,7 @@ function Overview() {
         ))}
       </div>
       <div className="grid lg:grid-cols-3 gap-4">
-        <Panel title="Recent alerts" className="lg:col-span-2" action={<span className="font-mono text-xs text-success"><span className="inline-block size-1.5 rounded-full bg-success live-dot mr-1" />LIVE</span>}>
+        <Panel title="Recent alerts" className="lg:col-span-2" action={<span className="font-mono text-xs text-muted-foreground">DEMO ALERT FEED</span>}>
           <ul className="divide-y font-mono text-xs">
             {alerts.map((a) => (
               <li key={a.t} className="flex items-center gap-3 py-2">
@@ -89,8 +89,8 @@ function Overview() {
           </ol>
         </Panel>
         <Panel title="Threat intelligence">
-          <p className="text-sm">Credential-phishing wave impersonating university finance portals across West Africa.</p>
-          <div className="mt-2 font-mono text-xs text-warning">ATT&CK T1566.002 · T1078</div>
+          <p className="text-sm">Sample threat-intelligence scenario for training. Validate against trusted sources before treating as a real-world incident.</p>
+          <div className="mt-2 font-mono text-xs text-warning">SIMULATED SCENARIO · ATT&CK REFERENCES</div>
         </Panel>
       </div>
     </>
