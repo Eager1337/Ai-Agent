@@ -32,10 +32,13 @@ export const Route = createFileRoute("/api/lab/sessions")({
         if ((active.data ?? []).length >= 2) return Response.json({ error: "You already have two active lab sessions. Stop one before starting another." }, { status: 429 });
 
         try {
+          const providerRequest: Record<string, unknown> = { api_key: apiKey, api_key_secret: apiSecret, image_id: imageId, enable_sharing: false, persistent_profile_mode: "Disabled", client_timezone: "UTC" };
+          const serverId = mode === "virtual-machine" ? process.env["KASM_VM_SERVER_ID"] : undefined;
+          if (serverId) providerRequest["server_id"] = serverId;
           const response = await fetch(new URL("/api/public/request_kasm", origin), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ api_key: apiKey, api_key_secret: apiSecret, image_id: imageId, enable_sharing: false, persistent_profile_mode: "Disabled", client_timezone: "UTC" }),
+            body: JSON.stringify(providerRequest),
             signal: AbortSignal.timeout(15000),
           });
           const body = await response.json() as Record<string, unknown>;
