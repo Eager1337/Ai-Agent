@@ -1,4 +1,3 @@
-import "server-only";
 import { createCipheriv, createDecipheriv, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { Snaptrade } from "snaptrade-typescript-sdk";
