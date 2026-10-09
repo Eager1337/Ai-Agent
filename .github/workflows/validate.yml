@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main, fix/command-center-pages]
+    branches: [main, fix/command-center-pages, feat/trading-intelligence-cyber-lab]
 
 permissions:
   contents: read
@@ -12,19 +12,19 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
+          bun-version: 1.2.17
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: bun install --no-save
       - name: Build application
-        run: npm run build
-      - name: Run tests when configured
-        run: npm test --if-present
-      - name: Lint when configured
-        run: npm run lint --if-present
+        run: bun run build
+      - name: Run tests
+        run: bun run test
+      - name: Lint
+        run: bun run lint
