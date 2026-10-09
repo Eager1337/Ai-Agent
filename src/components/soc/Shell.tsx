@@ -17,6 +17,8 @@ const core = [
   { to: "/conversations", label: "Saved Conversations" },
   { to: "/indicators", label: "Indicators" },
   { to: "/timeline", label: "Timeline" },
+  { to: "/trading", label: "Trading Intelligence" },
+  { to: "/cyber-lab", label: "Ethical Hacking Lab" },
 ] as const;
 
 const linkCls = "block px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary border-l-2 border-transparent";
