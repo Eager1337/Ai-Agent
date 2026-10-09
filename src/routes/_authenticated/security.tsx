@@ -52,6 +52,10 @@ function SecurityWorkspace() {
 
   async function inspectFile(f: File) {
     setNotice(""); setFile(null);
+    if (f.size > 25 * 1024 * 1024) {
+      setNotice("This local-first analyzer supports files up to 25 MB. Use a smaller, sanitized export.");
+      return;
+    }
     try {
       const bytes = await f.arrayBuffer();
       const digest = await crypto.subtle.digest("SHA-256", bytes);
