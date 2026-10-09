@@ -119,13 +119,11 @@ export interface FileRoutesByFullPath {
   '/agents': typeof AuthenticatedAgentsRoute
   '/cases': typeof AuthenticatedCasesRoute
   '/conversations': typeof AuthenticatedConversationsRoute
-  '/conversations': typeof AuthenticatedConversationsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/indicators': typeof AuthenticatedIndicatorsRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/planner': typeof AuthenticatedPlannerRoute
   '/projects': typeof AuthenticatedProjectsRoute
-  '/security': typeof AuthenticatedSecurityRoute
   '/security': typeof AuthenticatedSecurityRoute
   '/timeline': typeof AuthenticatedTimelineRoute
   '/api/chat': typeof ApiChatRoute
@@ -138,11 +136,13 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/agents': typeof AuthenticatedAgentsRoute
   '/cases': typeof AuthenticatedCasesRoute
+  '/conversations': typeof AuthenticatedConversationsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/indicators': typeof AuthenticatedIndicatorsRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/planner': typeof AuthenticatedPlannerRoute
   '/projects': typeof AuthenticatedProjectsRoute
+  '/security': typeof AuthenticatedSecurityRoute
   '/timeline': typeof AuthenticatedTimelineRoute
   '/api/chat': typeof ApiChatRoute
   '/api/plan': typeof ApiPlanRoute
