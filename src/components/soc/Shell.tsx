@@ -12,6 +12,8 @@ const core = [
   { to: "/dashboard", label: "Overview" },
   { to: "/cases", label: "Cases" },
   { to: "/security", label: "Security Operations" },
+  { to: "/lab", label: "Virtual Cyber Lab" },
+  { to: "/trading", label: "Trading Intelligence" },
   { to: "/planner", label: "AI Planner" },
   { to: "/agents", label: "Agent Team" },
   { to: "/conversations", label: "Saved Conversations" },
