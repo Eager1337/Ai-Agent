@@ -4,6 +4,37 @@ import { authenticateRequest } from "@/lib/integrations.server";
 export const Route = createFileRoute("/api/lab/sessions/$sessionId")({
   server: {
     handlers: {
+      DELETE: async ({ request, params }) => {
+        let auth;
+        try { auth = await authenticateRequest(request); }
+        catch { return Response.json({ error: "Lab hosting is not configured on the server." }, { status: 503 }); }
+        if (!auth) return Response.json({ error: "Unauthorized" }, { status: 401 });
+        const result = await auth.db.from("cyber_lab_sessions").select("id,provider_session_id,provider_user_id,status").eq("id", params.sessionId).eq("user_id", auth.userId).maybeSingle();
+        if (result.error) return Response.json({ error: "Could not retrieve lab session." }, { status: 503 });
+        if (!result.data) return Response.json({ error: "Lab session not found." }, { status: 404 });
+        const session = result.data as { id: string; provider_session_id: string; provider_user_id: string; status: string };
+        const base = process.env["KASM_URL"];
+        const apiKey = process.env["KASM_API_KEY"];
+        const apiSecret = process.env["KASM_API_KEY_SECRET"];
+        if (!base || !apiKey || !apiSecret) return Response.json({ error: "Lab hosting is not configured." }, { status: 503 });
+        try {
+          const origin = new URL(base);
+          if (origin.protocol !== "https:") return Response.json({ error: "KASM_URL must use HTTPS." }, { status: 503 });
+          const response = await fetch(new URL("/api/public/destroy_kasm", origin), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ api_key: apiKey, api_key_secret: apiSecret, user_id: session.provider_user_id, kasm_id: session.provider_session_id }),
+            signal: AbortSignal.timeout(12000),
+          });
+          const body = await response.json().catch(() => ({})) as Record<string, unknown>;
+          if (!response.ok || body["error_message"]) return Response.json({ error: "The lab provider could not stop this session." }, { status: 502 });
+          await auth.db.from("cyber_lab_sessions").update({ status: "stopped" }).eq("id", session.id).eq("user_id", auth.userId);
+          return Response.json({ status: "stopped", message: "Stop request sent to the lab provider." });
+        } catch (error) {
+          console.error("Lab stop request failed", error instanceof Error ? error.message : "unknown error");
+          return Response.json({ error: "Could not reach the lab provider to stop the session." }, { status: 502 });
+        }
+      },
       GET: async ({ request, params }) => {
         let auth;
         try { auth = await authenticateRequest(request); }
