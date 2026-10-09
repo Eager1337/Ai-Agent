@@ -55,6 +55,7 @@ export function unwrapData(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== "object") return {};
   const outer = value as Record<string, unknown>;
   const inner = outer["data"];
+  if (Array.isArray(inner)) return { data: inner };
   return inner && typeof inner === "object" ? inner as Record<string, unknown> : outer;
 }
 
