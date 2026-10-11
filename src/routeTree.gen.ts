@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAgentsRouteImport } from './routes/_authenticated/agents'
+import { Route as AuthenticatedApiKeysRouteImport } from './routes/_authenticated/api-keys'
 import { Route as AuthenticatedCasesRouteImport } from './routes/_authenticated/cases'
 import { Route as AuthenticatedConversationsRouteImport } from './routes/_authenticated/conversations'
 import { Route as AuthenticatedCyberLabRouteImport } from './routes/_authenticated/cyber-lab'
@@ -27,6 +28,7 @@ import { Route as AuthenticatedTradingRouteImport } from './routes/_authenticate
 import { Route as ApiAnalyzeRouteImport } from './routes/api/analyze'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiPlanRouteImport } from './routes/api/plan'
+import { Route as AuthenticatedCaseCaseIdRouteImport } from './routes/_authenticated/case.$caseId'
 import { Route as AuthenticatedChatThreadIdRouteImport } from './routes/_authenticated/chat.$threadId'
 import { Route as AuthenticatedMModuleRouteImport } from './routes/_authenticated/m.$module'
 import { Route as ApiLabSessionsRouteImport } from './routes/api/lab.sessions'
@@ -54,6 +56,11 @@ const AuthRoute = AuthRouteImport.update({
 const AuthenticatedAgentsRoute = AuthenticatedAgentsRouteImport.update({
   id: '/agents',
   path: '/agents',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedApiKeysRoute = AuthenticatedApiKeysRouteImport.update({
+  id: '/api-keys',
+  path: '/api-keys',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCasesRoute = AuthenticatedCasesRouteImport.update({
@@ -127,6 +134,11 @@ const ApiPlanRoute = ApiPlanRouteImport.update({
   path: '/api/plan',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCaseCaseIdRoute = AuthenticatedCaseCaseIdRouteImport.update({
+  id: '/case/$caseId',
+  path: '/case/$caseId',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedChatThreadIdRoute =
   AuthenticatedChatThreadIdRouteImport.update({
     id: '/chat/$threadId',
@@ -178,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/agents': typeof AuthenticatedAgentsRoute
+  '/api-keys': typeof AuthenticatedApiKeysRoute
   '/cases': typeof AuthenticatedCasesRoute
   '/conversations': typeof AuthenticatedConversationsRoute
   '/cyber-lab': typeof AuthenticatedCyberLabRoute
@@ -192,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/api/analyze': typeof ApiAnalyzeRoute
   '/api/chat': typeof ApiChatRoute
   '/api/plan': typeof ApiPlanRoute
+  '/case/$caseId': typeof AuthenticatedCaseCaseIdRoute
   '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
   '/m/$module': typeof AuthenticatedMModuleRoute
   '/api/lab/sessions': typeof ApiLabSessionsRouteWithChildren
@@ -206,6 +220,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/agents': typeof AuthenticatedAgentsRoute
+  '/api-keys': typeof AuthenticatedApiKeysRoute
   '/cases': typeof AuthenticatedCasesRoute
   '/conversations': typeof AuthenticatedConversationsRoute
   '/cyber-lab': typeof AuthenticatedCyberLabRoute
@@ -220,6 +235,7 @@ export interface FileRoutesByTo {
   '/api/analyze': typeof ApiAnalyzeRoute
   '/api/chat': typeof ApiChatRoute
   '/api/plan': typeof ApiPlanRoute
+  '/case/$caseId': typeof AuthenticatedCaseCaseIdRoute
   '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
   '/m/$module': typeof AuthenticatedMModuleRoute
   '/api/lab/sessions': typeof ApiLabSessionsRouteWithChildren
@@ -236,6 +252,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/agents': typeof AuthenticatedAgentsRoute
+  '/_authenticated/api-keys': typeof AuthenticatedApiKeysRoute
   '/_authenticated/cases': typeof AuthenticatedCasesRoute
   '/_authenticated/conversations': typeof AuthenticatedConversationsRoute
   '/_authenticated/cyber-lab': typeof AuthenticatedCyberLabRoute
@@ -250,6 +267,7 @@ export interface FileRoutesById {
   '/api/analyze': typeof ApiAnalyzeRoute
   '/api/chat': typeof ApiChatRoute
   '/api/plan': typeof ApiPlanRoute
+  '/_authenticated/case/$caseId': typeof AuthenticatedCaseCaseIdRoute
   '/_authenticated/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
   '/_authenticated/m/$module': typeof AuthenticatedMModuleRoute
   '/api/lab/sessions': typeof ApiLabSessionsRouteWithChildren
@@ -266,6 +284,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/agents'
+    | '/api-keys'
     | '/cases'
     | '/conversations'
     | '/cyber-lab'
@@ -280,6 +299,7 @@ export interface FileRouteTypes {
     | '/api/analyze'
     | '/api/chat'
     | '/api/plan'
+    | '/case/$caseId'
     | '/chat/$threadId'
     | '/m/$module'
     | '/api/lab/sessions'
@@ -294,6 +314,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/agents'
+    | '/api-keys'
     | '/cases'
     | '/conversations'
     | '/cyber-lab'
@@ -308,6 +329,7 @@ export interface FileRouteTypes {
     | '/api/analyze'
     | '/api/chat'
     | '/api/plan'
+    | '/case/$caseId'
     | '/chat/$threadId'
     | '/m/$module'
     | '/api/lab/sessions'
@@ -323,6 +345,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/agents'
+    | '/_authenticated/api-keys'
     | '/_authenticated/cases'
     | '/_authenticated/conversations'
     | '/_authenticated/cyber-lab'
@@ -337,6 +360,7 @@ export interface FileRouteTypes {
     | '/api/analyze'
     | '/api/chat'
     | '/api/plan'
+    | '/_authenticated/case/$caseId'
     | '/_authenticated/chat/$threadId'
     | '/_authenticated/m/$module'
     | '/api/lab/sessions'
@@ -391,6 +415,13 @@ declare module '@tanstack/react-router' {
       path: '/agents'
       fullPath: '/agents'
       preLoaderRoute: typeof AuthenticatedAgentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/api-keys': {
+      id: '/_authenticated/api-keys'
+      path: '/api-keys'
+      fullPath: '/api-keys'
+      preLoaderRoute: typeof AuthenticatedApiKeysRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/cases': {
@@ -491,6 +522,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPlanRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/case/$caseId': {
+      id: '/_authenticated/case/$caseId'
+      path: '/case/$caseId'
+      fullPath: '/case/$caseId'
+      preLoaderRoute: typeof AuthenticatedCaseCaseIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/chat/$threadId': {
       id: '/_authenticated/chat/$threadId'
       path: '/chat/$threadId'
@@ -559,6 +597,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAgentsRoute: typeof AuthenticatedAgentsRoute
+  AuthenticatedApiKeysRoute: typeof AuthenticatedApiKeysRoute
   AuthenticatedCasesRoute: typeof AuthenticatedCasesRoute
   AuthenticatedConversationsRoute: typeof AuthenticatedConversationsRoute
   AuthenticatedCyberLabRoute: typeof AuthenticatedCyberLabRoute
@@ -570,12 +609,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSecurityRoute: typeof AuthenticatedSecurityRoute
   AuthenticatedTimelineRoute: typeof AuthenticatedTimelineRoute
   AuthenticatedTradingRoute: typeof AuthenticatedTradingRoute
+  AuthenticatedCaseCaseIdRoute: typeof AuthenticatedCaseCaseIdRoute
   AuthenticatedChatThreadIdRoute: typeof AuthenticatedChatThreadIdRoute
   AuthenticatedMModuleRoute: typeof AuthenticatedMModuleRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAgentsRoute: AuthenticatedAgentsRoute,
+  AuthenticatedApiKeysRoute: AuthenticatedApiKeysRoute,
   AuthenticatedCasesRoute: AuthenticatedCasesRoute,
   AuthenticatedConversationsRoute: AuthenticatedConversationsRoute,
   AuthenticatedCyberLabRoute: AuthenticatedCyberLabRoute,
@@ -587,6 +628,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSecurityRoute: AuthenticatedSecurityRoute,
   AuthenticatedTimelineRoute: AuthenticatedTimelineRoute,
   AuthenticatedTradingRoute: AuthenticatedTradingRoute,
+  AuthenticatedCaseCaseIdRoute: AuthenticatedCaseCaseIdRoute,
   AuthenticatedChatThreadIdRoute: AuthenticatedChatThreadIdRoute,
   AuthenticatedMModuleRoute: AuthenticatedMModuleRoute,
 }
