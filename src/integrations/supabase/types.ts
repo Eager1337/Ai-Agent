@@ -44,6 +44,42 @@ export type Database = {
         }
         Relationships: []
       }
+      api_keys: {
+        Row: {
+          agent_ids: string[]
+          created_at: string
+          id: string
+          key_hash: string
+          last_used_at: string | null
+          name: string
+          prefix: string
+          revoked_at: string | null
+          user_id: string
+        }
+        Insert: {
+          agent_ids?: string[]
+          created_at?: string
+          id?: string
+          key_hash: string
+          last_used_at?: string | null
+          name: string
+          prefix: string
+          revoked_at?: string | null
+          user_id?: string
+        }
+        Update: {
+          agent_ids?: string[]
+          created_at?: string
+          id?: string
+          key_hash?: string
+          last_used_at?: string | null
+          name?: string
+          prefix?: string
+          revoked_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       case_audit: {
         Row: {
           action: string
@@ -72,6 +108,59 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "case_audit_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_items: {
+        Row: {
+          case_id: string
+          created_at: string
+          id: string
+          item_type: string
+          kind: string
+          mime: string | null
+          modified_at: string | null
+          notes: string
+          sha256: string | null
+          size_bytes: number | null
+          user_id: string
+          value: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          id?: string
+          item_type: string
+          kind: string
+          mime?: string | null
+          modified_at?: string | null
+          notes?: string
+          sha256?: string | null
+          size_bytes?: number | null
+          user_id?: string
+          value: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          id?: string
+          item_type?: string
+          kind?: string
+          mime?: string | null
+          modified_at?: string | null
+          notes?: string
+          sha256?: string | null
+          size_bytes?: number | null
+          user_id?: string
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_items_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "cases"
