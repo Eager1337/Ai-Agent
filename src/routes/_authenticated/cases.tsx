@@ -1,4 +1,4 @@
-import { createFileRoute, useRouteContext } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouteContext } from "@tanstack/react-router";
 import { useState } from "react";
 import { Empty, PageTitle, Panel, btn, btnGhost, input } from "@/components/soc/Shell";
 import { AUTH_STATES } from "@/lib/soc-data";
@@ -130,6 +130,7 @@ function CasesPage() {
                   <div key={k}><dt className="label-mono">{k}</dt><dd className="mt-0.5 break-words">{v || "—"}</dd></div>))}
               </dl>
               <div className="mt-4 flex flex-wrap gap-2">
+                <Link to="/case/$caseId" params={{ caseId: current.id }} className={btn}>Open workspace: OSINT · Forensics · AI Planner</Link>
                 {["Prepare OSINT research plan", "Review supplied evidence", "Review scoped assessment plan"].map((op) => (
                   <button key={op} className={btnGhost} onClick={() => { setConfirmOp(op); setAgreed(false); setConfirmError(null); }}>{op}</button>))}
               </div>

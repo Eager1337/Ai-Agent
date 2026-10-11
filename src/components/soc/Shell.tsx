@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 const workspace = [
   { to: "/projects", label: "Projects" },
   { to: "/notes", label: "Notes" },
+  { to: "/api-keys", label: "API Keys" },
 ] as const;
 const core = [
   { to: "/dashboard", label: "Overview" },
