@@ -42,7 +42,19 @@ export const useProjects = () =>
 export const useNotes = () =>
   useQuery({ queryKey: ["notes"], queryFn: async () => ok(await supabase.from("notes").select("*").order("created_at", { ascending: false })) });
 
-export function useInsert<K extends "cases" | "case_audit" | "agents" | "threads" | "projects" | "notes">(table: K, invalidate: string[]) {
+export type CaseItemRow = T["case_items"]["Row"];
+export type ApiKeyRow = T["api_keys"]["Row"];
+
+export const useCaseItems = (caseId?: string) =>
+  useQuery({
+    queryKey: ["case_items", caseId], enabled: !!caseId,
+    queryFn: async () => ok(await supabase.from("case_items").select("*").eq("case_id", caseId!).order("created_at", { ascending: false })),
+  });
+
+export const useApiKeys = () =>
+  useQuery({ queryKey: ["api_keys"], queryFn: async () => ok(await supabase.from("api_keys").select("id, name, prefix, agent_ids, last_used_at, revoked_at, created_at, user_id, key_hash").order("created_at", { ascending: false })) });
+
+export function useInsert<K extends "cases" | "case_audit" | "agents" | "threads" | "projects" | "notes" | "case_items" | "api_keys">(table: K, invalidate: string[]) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (row: T[K]["Insert"]) => ok(await supabase.from(table).insert(row as never).select().single()) as T[K]["Row"],
@@ -50,10 +62,18 @@ export function useInsert<K extends "cases" | "case_audit" | "agents" | "threads
   });
 }
 
-export function useDelete(table: "notes" | "projects" | "threads" | "agents", invalidate: string[]) {
+export function useDelete(table: "notes" | "projects" | "threads" | "agents" | "case_items", invalidate: string[]) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => { ok(await supabase.from(table).delete().eq("id", id)); },
     onSuccess: () => invalidate.forEach((k) => qc.invalidateQueries({ queryKey: [k] })),
+  });
+}
+
+export function useRevokeKey() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => { ok(await supabase.from("api_keys").update({ revoked_at: new Date().toISOString() }).eq("id", id)); },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["api_keys"] }),
   });
 }
