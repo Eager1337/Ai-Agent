@@ -38,7 +38,7 @@ export const Route = createFileRoute("/api/analyze")({
         if (!u) return new Response("Unauthorized", { status: 401 });
         const { data: auth } = await u.sb.auth.getUser(u.token);
         if (!auth.user) return new Response("Unauthorized", { status: 401 });
-        if (auth.user.email?.toLowerCase() !== "ebeaver091@gmail.com" && auth.user.app_metadata?.paid_access !== true) {
+        if (auth.user.email?.toLowerCase() !== "ebeaver091@gmail.com" && auth.user.app_metadata?.["paid_access"] !== true) {
           return new Response("Paid access is required.", { status: 403 });
         }
         let body: { caseId?: string; mode?: string; extra?: string };

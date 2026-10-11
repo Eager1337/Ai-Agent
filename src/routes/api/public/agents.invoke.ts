@@ -34,7 +34,7 @@ export const Route = createFileRoute("/api/public/agents/invoke")({
 
         const { data: owner } = await supabaseAdmin.auth.admin.getUserById(k.user_id);
         const u = owner?.user;
-        if (!u || (u.email?.toLowerCase() !== "ebeaver091@gmail.com" && u.app_metadata?.paid_access !== true)) {
+        if (!u || (u.email?.toLowerCase() !== "ebeaver091@gmail.com" && u.app_metadata?.["paid_access"] !== true)) {
           return json(403, "The key owner's account does not have paid access.");
         }
         const { data: agent } = await supabaseAdmin.from("agents").select("name, role, instructions").eq("id", agentId).eq("user_id", k.user_id).maybeSingle();
